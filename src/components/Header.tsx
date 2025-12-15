@@ -1,4 +1,4 @@
-import { Bell, Plus, LogOut, User, Moon, Settings } from "lucide-react";
+import { Bell, LogOut, Moon, Settings } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -29,7 +29,7 @@ export function Header() {
             </svg>
           </div>
           <div>
-            <h1 className="text-white tracking-tight">Super Admin</h1>
+            <h1 className="text-white tracking-tight">CloudDoc</h1>
           </div>
         </div>
 

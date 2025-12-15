@@ -327,28 +327,17 @@ export function CompleteFileManager() {
           <div className="flex gap-3">
             <Button
               onClick={() => fileInputRef.current?.click()}
-              className="h-12 px-6 bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 backdrop-blur-xl transition-all shadow-lg"
+              className="h-12 px-6 bg-[#FF7619] hover:bg-[#FF7619]/90 rounded-xl transition-all shadow-lg text-white font-semibold"
             >
-              <Upload className="w-5 h-5 mr-2 text-white" />
-              <span 
-                className="font-semibold"
-                style={{
-                  background: 'linear-gradient(to right, rgba(154, 24, 251, 1), rgb(200, 100, 200), #FF7619)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
-                }}
-              >
-                Upload File
-              </span>
+              <Upload className="w-5 h-5 mr-2" />
+              Upload File
             </Button>
             <Button
               onClick={() => setShowCreateModal(true)}
-              className="h-12 px-6 rounded-xl shadow-lg border-0"
-              style={{ background: 'linear-gradient(to right, #FF7619, rgba(154, 24, 251, 1))' }}
+              className="h-12 px-6 bg-[#9A18FB] hover:bg-[#9A18FB]/90 rounded-xl transition-all shadow-lg text-white font-semibold"
             >
-              <FolderPlus className="w-5 h-5 mr-2 text-white" />
-              <span className="text-white font-semibold">New Folder</span>
+              <FolderPlus className="w-5 h-5 mr-2" />
+              New Folder
             </Button>
           </div>
         )}
@@ -363,33 +352,30 @@ export function CompleteFileManager() {
       />
 
       {/* Breadcrumbs */}
-      <div className="flex items-center gap-2 text-sm">
-        {breadcrumbs.map((crumb, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <button
-              onClick={() => handleBreadcrumbClick(index)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
-                index === breadcrumbs.length - 1
-                  ? ''
-                  : 'text-gray-400 hover:text-white hover:bg-white/10'
-              }`}
-              style={
-                index === breadcrumbs.length - 1
-                  ? {
-                      backgroundColor: 'rgba(255, 118, 25, 0.2)',
-                      color: '#FF7619',
-                    }
-                  : undefined
-              }
-            >
-              {index === 0 && <Home className="w-4 h-4" />}
-              <span>{crumb.name}</span>
-            </button>
-            {index < breadcrumbs.length - 1 && (
-              <ChevronRight className="w-4 h-4 text-gray-600" />
-            )}
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-purple-500/10 rounded-2xl blur-xl"></div>
+        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-4 border border-white/10">
+          <div className="flex items-center gap-2 text-sm">
+            {breadcrumbs.map((crumb, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <button
+                  onClick={() => handleBreadcrumbClick(index)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                    index === breadcrumbs.length - 1
+                      ? 'bg-gradient-to-r from-[#FF7619] to-[#9A18FB] text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {index === 0 && <Home className="w-4 h-4" />}
+                  <span className="font-medium">{crumb.name}</span>
+                </button>
+                {index < breadcrumbs.length - 1 && (
+                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                )}
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
       {/* Folders Grid */}

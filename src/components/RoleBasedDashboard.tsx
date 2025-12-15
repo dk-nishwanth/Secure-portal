@@ -1,5 +1,5 @@
 import { useAuth } from "../contexts/AuthContext";
-import { Users, Files, FolderOpen, Shield, AlertTriangle, Activity, TrendingUp, Plus, HardDrive, Upload, Clock, FileText, Briefcase, FileBarChart, Lock } from "lucide-react";
+import { Users, Files, FolderOpen, Shield, AlertTriangle, Activity, TrendingUp, Plus, HardDrive, Upload, Clock } from "lucide-react";
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Progress } from "./ui/progress";
 
@@ -221,16 +221,23 @@ function SuperAdminDashboard() {
         </div>
       </div>
 
-      {/* Security Activity Table */}
+      {/* Share Activity Table */}
       <div className="relative group">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 rounded-3xl blur-xl"></div>
         <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-white text-lg">Security Activity</h3>
+            <h3 className="text-white text-lg">Share Activity</h3>
             <div className="flex gap-2">
-              <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
-                <span className="text-sm">Search</span>
-              </button>
+              <div className="relative flex-1 min-w-[200px]">
+                <input
+                  type="text"
+                  placeholder="Search activity..."
+                  className="w-full px-4 py-2 pl-10 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-gray-500 focus:border-[#FF7619] focus:outline-none transition-all"
+                />
+                <svg className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
               <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2">
                 <Shield className="w-4 h-4" />
                 <span className="text-sm">Filter</span>
@@ -242,9 +249,9 @@ function SuperAdminDashboard() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-white/5">
-                  <th className="text-left py-3 px-4 text-sm text-gray-400">Name</th>
-                  <th className="text-left py-3 px-4 text-sm text-gray-400">Transaction ID</th>
-                  <th className="text-left py-3 px-4 text-sm text-gray-400">Type</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400">File Name</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400">Shared With</th>
+                  <th className="text-left py-3 px-4 text-sm text-gray-400">Expires</th>
                   <th className="text-left py-3 px-4 text-sm text-gray-400">Status</th>
                 </tr>
               </thead>
@@ -253,14 +260,14 @@ function SuperAdminDashboard() {
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                        <Shield className="w-4 h-4 text-white" />
+                        <Files className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-white text-sm">Security Scan</span>
+                      <span className="text-white text-sm">Q4_Report.pdf</span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-gray-400 text-sm">#21325554</td>
-                  <td className="py-4 px-4 text-gray-400 text-sm">*****5635</td>
-                  <td className="py-4 px-4 text-green-400 text-sm">Complete</td>
+                  <td className="py-4 px-4 text-gray-400 text-sm">john@company.com</td>
+                  <td className="py-4 px-4 text-yellow-400 text-sm">In 2 days</td>
+                  <td className="py-4 px-4 text-green-400 text-sm">Active</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td className="py-4 px-4">
@@ -268,25 +275,25 @@ function SuperAdminDashboard() {
                       <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
                         <Files className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-white text-sm">File Upload</span>
+                      <span className="text-white text-sm">Budget_2024.xlsx</span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-gray-400 text-sm">#21325554</td>
-                  <td className="py-4 px-4 text-gray-400 text-sm">*****5635</td>
-                  <td className="py-4 px-4 text-green-400 text-sm">Complete</td>
+                  <td className="py-4 px-4 text-gray-400 text-sm">team@company.com</td>
+                  <td className="py-4 px-4 text-orange-400 text-sm">Tomorrow</td>
+                  <td className="py-4 px-4 text-green-400 text-sm">Active</td>
                 </tr>
                 <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                        <AlertTriangle className="w-4 h-4 text-red-400" />
+                        <Files className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-white text-sm">Threat Blocked</span>
+                      <span className="text-white text-sm">Project_Plan.docx</span>
                     </div>
                   </td>
-                  <td className="py-4 px-4 text-gray-400 text-sm">#21325554</td>
-                  <td className="py-4 px-4 text-gray-400 text-sm">*****5635</td>
-                  <td className="py-4 px-4 text-red-400 text-sm">Blocked</td>
+                  <td className="py-4 px-4 text-gray-400 text-sm">sarah@company.com</td>
+                  <td className="py-4 px-4 text-red-400 text-sm">In 6 hours</td>
+                  <td className="py-4 px-4 text-green-400 text-sm">Active</td>
                 </tr>
               </tbody>
             </table>

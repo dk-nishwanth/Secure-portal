@@ -180,20 +180,10 @@ export function CompleteUserManagement() {
         </div>
         <Button
           onClick={() => setShowAddModal(true)}
-          className="h-12 px-6 bg-white/10 hover:bg-white/20 rounded-xl border border-white/10 backdrop-blur-xl transition-all shadow-lg"
+          className="h-12 px-6 bg-[#9A18FB] hover:bg-[#9A18FB]/90 rounded-xl transition-all shadow-lg text-white font-semibold"
         >
-          <UserPlus className="w-5 h-5 mr-2 text-white" />
-          <span 
-            className="font-semibold"
-            style={{
-              background: 'linear-gradient(to right, rgba(154, 24, 251, 1), rgb(200, 100, 200), #FF7619)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}
-          >
-            Add User
-          </span>
+          <UserPlus className="w-5 h-5 mr-2" />
+          Add User
         </Button>
       </div>
 

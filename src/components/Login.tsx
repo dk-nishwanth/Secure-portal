@@ -1,4 +1,4 @@
-import { useState } from 'react';
+  import { useState, FormEvent, CSSProperties } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -11,7 +11,7 @@ export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const { setRole, setName } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: FormEvent) => {
     e.preventDefault();
     // In production, this would call POST /auth/login
     // For now, we'll use demo logic
@@ -56,14 +56,16 @@ export function Login() {
             <div>
               <Label htmlFor="email" className="text-gray-300 mb-2 block">Email Address</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                  <Mail className="w-5 h-5 text-gray-500" />
+                </div>
                 <Input
                   id="email"
                   type="email"
                   placeholder="admin@superadmin.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-11 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
+                  className="pl-14 pr-4 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
                   onFocus={(e) => {
                     e.target.style.borderColor = 'rgba(255, 118, 25, 0.5)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(255, 118, 25, 0.2)';
@@ -79,14 +81,16 @@ export function Login() {
             <div>
               <Label htmlFor="password" className="text-gray-300 mb-2 block">Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                  <Lock className="w-5 h-5 text-gray-500" />
+                </div>
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-11 pr-11 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
+                  className="pl-14 pr-14 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
                   onFocus={(e) => {
                     e.target.style.borderColor = 'rgba(255, 118, 25, 0.5)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(255, 118, 25, 0.2)';
@@ -99,7 +103,8 @@ export function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors z-10 focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -143,7 +148,7 @@ export function Login() {
               onClick={() => handleDemoLogin('super-admin', 'Admin User')}
               variant="outline"
               className="w-full h-12 border-white/10 bg-[#1a1a2e]/50 text-white hover:bg-[#1a1a2e] rounded-xl transition-all"
-              style={{ '--hover-border-color': 'rgba(255, 118, 25, 0.5)' } as React.CSSProperties & { [key: string]: string }}
+              style={{ '--hover-border-color': 'rgba(255, 118, 25, 0.5)' } as CSSProperties & { [key: string]: string }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(255, 118, 25, 0.5)'}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
             >

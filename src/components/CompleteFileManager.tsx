@@ -106,7 +106,7 @@ const permissionOptions = [
 ];
 
 export function CompleteFileManager() {
-  const { role } = useAuth();
+  const { role, currentOrgName } = useAuth();
   const [currentFolderId, setCurrentFolderId] = useState<string | null>(null);
   const [items, setItems] = useState<Item[]>([...mockFolders, ...mockFiles]);
   const [breadcrumbs, setBreadcrumbs] = useState<{ id: string | null; name: string }[]>([
@@ -321,7 +321,12 @@ export function CompleteFileManager() {
           >
             File Manager
           </h1>
-          <p className="text-gray-400">Manage your files and folders securely</p>
+          <p className="text-gray-400">
+            Manage your files and folders securely
+            {currentOrgName && (
+              <span className="ml-2 text-[#FF7619]">• {currentOrgName}</span>
+            )}
+          </p>
         </div>
         {isSuperAdmin && (
           <div className="flex gap-3">

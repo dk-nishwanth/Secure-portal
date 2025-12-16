@@ -1,4 +1,4 @@
-import { LayoutDashboard, FolderOpen, Users, Shield, Activity, Settings, BarChart3, Clock } from "lucide-react";
+import { LayoutDashboard, Users, Shield, Folder, Building2, UserCog } from "lucide-react";
 import { ActivePage } from "./Dashboard";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -10,18 +10,14 @@ interface SidebarProps {
 export function Sidebar({ activePage, onPageChange }: SidebarProps) {
   const { role } = useAuth();
 
+  // 6 Main Menu Items based on workflow (Orange in annotations - Sidebar)
   const menuItems = [
-    { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Dashboard" },
-    { id: "files" as ActivePage, icon: FolderOpen, tooltip: "Files" },
-    ...(role === "super-admin" ? [{ id: "users" as ActivePage, icon: Users, tooltip: "Users" }] : []),
-  ];
-
-  const securityItems = [
-    { icon: BarChart3, tooltip: "Analytics" },
-    { icon: Shield, tooltip: "Security" },
-    { icon: Clock, tooltip: "History" },
-    { icon: Activity, tooltip: "Activity" },
-    { icon: Settings, tooltip: "Settings" },
+    { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Super Admin Dashboard" },
+    { id: "admin" as ActivePage, icon: UserCog, tooltip: "Admin Management" },
+    { id: "users" as ActivePage, icon: Users, tooltip: "User Management" },
+    { id: "organizations" as ActivePage, icon: Building2, tooltip: "Organizations" },
+    { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
+    { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
   ];
 
   return (
@@ -48,29 +44,6 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
                       }
                     : undefined
                 }
-              >
-                <Icon className="w-5 h-5" />
-              </button>
-              {/* Tooltip */}
-              <div className="absolute left-16 top-1/2 -translate-y-1/2 ml-2 px-3 py-1.5 bg-[#1a1a2e] rounded-lg text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity border border-white/10 shadow-xl">
-                {item.tooltip}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Divider */}
-      <div className="w-8 h-px bg-white/10 my-4"></div>
-
-      {/* Security Items */}
-      <div className="space-y-2 flex-1">
-        {securityItems.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <div key={index} className="relative group">
-              <button
-                className="w-12 h-12 rounded-2xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
               >
                 <Icon className="w-5 h-5" />
               </button>

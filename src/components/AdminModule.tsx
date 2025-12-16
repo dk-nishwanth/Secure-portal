@@ -14,9 +14,27 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 import { useAuth } from '../contexts/AuthContext';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
 
 type AdminView = 'dashboard' | 'users' | 'admins';
+
+interface Admin {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+}
 
 interface AdminModuleProps {
   onBack: () => void;
@@ -25,6 +43,71 @@ interface AdminModuleProps {
 export function AdminModule({ onBack }: AdminModuleProps) {
   const { currentOrgName } = useAuth();
   const [activeView, setActiveView] = useState<AdminView>('dashboard');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [adminName, setAdminName] = useState('');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminRole, setAdminRole] = useState('Admin');
+  const [admins, setAdmins] = useState<Admin[]>([
+    { id: '1', name: 'Super Admin', email: 'superadmin@company.com', role: 'Super Admin', status: 'Active' },
+    { id: '2', name: 'System Admin', email: 'sysadmin@company.com', role: 'System Admin', status: 'Active' },
+    { id: '3', name: 'Admin User', email: 'admin@company.com', role: 'Admin', status: 'Active' },
+  ]);
+
+  const handleCreateAdmin = () => {
+    if (adminName.trim() && adminEmail.trim()) {
+      const newAdmin: Admin = {
+        id: `a${Date.now()}`,
+        name: adminName,
+        email: adminEmail,
+        role: adminRole,
+        status: 'Active',
+      };
+      setAdmins([newAdmin, ...admins]);
+      setAdminName('');
+      setAdminEmail('');
+      setAdminRole('Admin');
+      setShowCreateModal(false);
+    }
+  };
+
+  const handleEditAdmin = () => {
+    if (selectedAdmin && adminName.trim() && adminEmail.trim()) {
+      setAdmins(admins.map(a => 
+        a.id === selectedAdmin.id 
+          ? { ...a, name: adminName, email: adminEmail, role: adminRole }
+          : a
+      ));
+      setShowEditModal(false);
+      setSelectedAdmin(null);
+      setAdminName('');
+      setAdminEmail('');
+      setAdminRole('Admin');
+    }
+  };
+
+  const handleDeleteAdmin = () => {
+    if (selectedAdmin) {
+      setAdmins(admins.filter(a => a.id !== selectedAdmin.id));
+      setShowDeleteModal(false);
+      setSelectedAdmin(null);
+    }
+  };
+
+  const openEditModal = (admin: Admin) => {
+    setSelectedAdmin(admin);
+    setAdminName(admin.name);
+    setAdminEmail(admin.email);
+    setAdminRole(admin.role);
+    setShowEditModal(true);
+  };
+
+  const openDeleteModal = (admin: Admin) => {
+    setSelectedAdmin(admin);
+    setShowDeleteModal(true);
+  };
 
   // Dashboard Metrics
   const metrics = [
@@ -51,6 +134,7 @@ export function AdminModule({ onBack }: AdminModuleProps) {
         </div>
         <div>
           <Button
+            onClick={() => setShowCreateModal(true)}
             className="h-12 px-6 rounded-xl transition-all shadow-lg text-white font-semibold"
             style={{ 
               backgroundColor: '#FF7619',
@@ -111,9 +195,6 @@ export function AdminModule({ onBack }: AdminModuleProps) {
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${metric.color} flex items-center justify-center shadow-lg`}>
                         <Icon className="w-6 h-6 text-white" />
                       </div>
-                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                        {metric.change}
-                      </Badge>
                     </div>
                     <p className="text-gray-400 text-sm mb-1">{metric.label}</p>
                     <p className="text-3xl font-bold text-white">{metric.value}</p>
@@ -171,18 +252,13 @@ export function AdminModule({ onBack }: AdminModuleProps) {
                     <tr className="border-b border-white/5">
                       <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Name</th>
                       <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Email</th>
-                      <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Role</th>
                       <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Status</th>
                       <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      { name: 'Super Admin', email: 'superadmin@company.com', role: 'Super Admin', status: 'Active' },
-                      { name: 'System Admin', email: 'sysadmin@company.com', role: 'System Admin', status: 'Active' },
-                      { name: 'Admin User', email: 'admin@company.com', role: 'Admin', status: 'Active' },
-                    ].map((admin, index) => (
-                      <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    {admins.map((admin) => (
+                      <tr key={admin.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-semibold">
@@ -193,27 +269,33 @@ export function AdminModule({ onBack }: AdminModuleProps) {
                         </td>
                         <td className="py-4 px-4 text-gray-400">{admin.email}</td>
                         <td className="py-4 px-4">
-                          <Badge className="bg-[#FF7619]/20 text-[#FF7619] border-[#FF7619]/30">
-                            {admin.role}
-                          </Badge>
-                        </td>
-                        <td className="py-4 px-4">
-                          <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                            {admin.status}
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <span className="text-green-400">{admin.status}</span>
+                          </div>
                         </td>
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-2">
                             <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white">
                               <Eye className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => openEditModal(admin)}
+                              className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
+                            >
                               <Edit2 className="w-4 h-4" />
                             </Button>
                             <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white">
                               <Mail className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => openDeleteModal(admin)}
+                              className="w-8 h-8 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400"
+                            >
                               <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
@@ -227,6 +309,202 @@ export function AdminModule({ onBack }: AdminModuleProps) {
           </div>
         </div>
       )}
+
+      {/* Create Admin Modal */}
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ 
+                  backgroundColor: '#FF7619',
+                  boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                }}
+              >
+                <UserPlus className="w-5 h-5 text-white" />
+              </div>
+              Create New Admin
+            </DialogTitle>
+            <DialogDescription className="text-gray-400 mt-2">
+              Add a new administrator to the system
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            <div>
+              <Label htmlFor="adminName" className="text-gray-300 mb-2 block font-medium">
+                Admin Name
+              </Label>
+              <Input
+                id="adminName"
+                value={adminName}
+                onChange={(e) => setAdminName(e.target.value)}
+                placeholder="Enter admin name"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="adminEmail" className="text-gray-300 mb-2 block font-medium">
+                Email Address
+              </Label>
+              <Input
+                id="adminEmail"
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@company.com"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="adminRole" className="text-gray-300 mb-2 block font-medium">
+                Role
+              </Label>
+              <Input
+                id="adminRole"
+                value={adminRole}
+                onChange={(e) => setAdminRole(e.target.value)}
+                placeholder="Admin"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCreateModal(false);
+                setAdminName('');
+                setAdminEmail('');
+                setAdminRole('Admin');
+              }}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateAdmin}
+              className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold"
+              style={{ 
+                backgroundColor: '#FF7619',
+                boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+              }}
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Create Admin
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Admin Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white">Edit Admin</DialogTitle>
+            <DialogDescription className="text-gray-400 mt-2">
+              Update administrator information
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            <div>
+              <Label htmlFor="editAdminName" className="text-gray-300 mb-2 block font-medium">
+                Admin Name
+              </Label>
+              <Input
+                id="editAdminName"
+                value={adminName}
+                onChange={(e) => setAdminName(e.target.value)}
+                className="bg-white/5 border-white/10 text-white h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="editAdminEmail" className="text-gray-300 mb-2 block font-medium">
+                Email Address
+              </Label>
+              <Input
+                id="editAdminEmail"
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                className="bg-white/5 border-white/10 text-white h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="editAdminRole" className="text-gray-300 mb-2 block font-medium">
+                Role
+              </Label>
+              <Input
+                id="editAdminRole"
+                value={adminRole}
+                onChange={(e) => setAdminRole(e.target.value)}
+                className="bg-white/5 border-white/10 text-white h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowEditModal(false);
+                setSelectedAdmin(null);
+                setAdminName('');
+                setAdminEmail('');
+                setAdminRole('Admin');
+              }}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEditAdmin}
+              className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold"
+              style={{ 
+                backgroundColor: '#FF7619',
+                boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+              }}
+            >
+              <Edit2 className="w-4 h-4 mr-2" />
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle>Delete Admin</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Are you sure you want to delete "{selectedAdmin?.name}"? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteModal(false)}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteAdmin}
+              className="bg-red-500 hover:bg-red-600 h-12 px-6 rounded-xl"
+            >
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

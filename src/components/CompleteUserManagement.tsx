@@ -11,6 +11,7 @@ import {
   Shield,
   Activity,
   Clock,
+  Eye,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -39,25 +40,31 @@ interface User {
   status: 'Active' | 'Inactive';
   lastActive: string;
   avatar: string;
+  type: 'internal' | 'external';
 }
 
 const mockUsers: User[] = [
-  { id: '1', name: 'John Doe', email: 'john.doe@company.com', role: 'Admin', status: 'Active', lastActive: '2 mins ago', avatar: 'JD' },
-  { id: '2', name: 'Sarah Anderson', email: 'sarah.a@company.com', role: 'User', status: 'Active', lastActive: '5 mins ago', avatar: 'SA' },
-  { id: '3', name: 'Mike Johnson', email: 'mike.j@company.com', role: 'Moderator', status: 'Active', lastActive: '1 hour ago', avatar: 'MJ' },
-  { id: '4', name: 'Emma Wilson', email: 'emma.w@company.com', role: 'User', status: 'Active', lastActive: '2 hours ago', avatar: 'EW' },
-  { id: '5', name: 'Alex Chen', email: 'alex.c@company.com', role: 'User', status: 'Inactive', lastActive: '2 days ago', avatar: 'AC' },
-  { id: '6', name: 'Lisa Brown', email: 'lisa.b@company.com', role: 'Admin', status: 'Active', lastActive: '10 mins ago', avatar: 'LB' },
-  { id: '7', name: 'Tom Harris', email: 'tom.h@company.com', role: 'Moderator', status: 'Active', lastActive: '30 mins ago', avatar: 'TH' },
-  { id: '8', name: 'Kate Miller', email: 'kate.m@company.com', role: 'User', status: 'Inactive', lastActive: '1 week ago', avatar: 'KM' },
+  { id: '1', name: 'John Doe', email: 'john.doe@company.com', role: 'Admin', status: 'Active', lastActive: '2 mins ago', avatar: 'JD', type: 'internal' },
+  { id: '2', name: 'Sarah Anderson', email: 'sarah.a@company.com', role: 'User', status: 'Active', lastActive: '5 mins ago', avatar: 'SA', type: 'internal' },
+  { id: '3', name: 'Mike Johnson', email: 'mike.j@company.com', role: 'Moderator', status: 'Active', lastActive: '1 hour ago', avatar: 'MJ', type: 'internal' },
+  { id: '4', name: 'Emma Wilson', email: 'emma.w@company.com', role: 'User', status: 'Active', lastActive: '2 hours ago', avatar: 'EW', type: 'internal' },
+  { id: '5', name: 'Alex Chen', email: 'alex.c@company.com', role: 'User', status: 'Inactive', lastActive: '2 days ago', avatar: 'AC', type: 'external' },
+  { id: '6', name: 'Lisa Brown', email: 'lisa.b@company.com', role: 'Admin', status: 'Active', lastActive: '10 mins ago', avatar: 'LB', type: 'internal' },
+  { id: '7', name: 'Tom Harris', email: 'tom.h@company.com', role: 'Moderator', status: 'Active', lastActive: '30 mins ago', avatar: 'TH', type: 'external' },
+  { id: '8', name: 'Kate Miller', email: 'kate.m@company.com', role: 'User', status: 'Inactive', lastActive: '1 week ago', avatar: 'KM', type: 'external' },
 ];
 
 export function CompleteUserManagement() {
   const [users, setUsers] = useState<User[]>(mockUsers);
+  const [userType, setUserType] = useState<'internal' | 'external'>('internal');
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
+  const [editTarget, setEditTarget] = useState<User | null>(null);
+  const [detailsTarget, setDetailsTarget] = useState<User | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [errorName, setErrorName] = useState('');
@@ -88,6 +95,7 @@ export function CompleteUserManagement() {
       role: 'User',
       status: 'Active',
       lastActive: 'Just now',
+      type: userType,
       avatar: name
         .split(' ')
         .map((n) => n[0])
@@ -102,6 +110,33 @@ export function CompleteUserManagement() {
     setShowAddModal(false);
   };
 
+  const handleEditUser = () => {
+    setErrorName('');
+    setErrorEmail('');
+
+    if (name.length < 2) {
+      setErrorName('Name must be at least 2 characters');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setErrorEmail('Please enter a valid email address');
+      return;
+    }
+
+    if (editTarget) {
+      setUsers(users.map(u => 
+        u.id === editTarget.id 
+          ? { ...u, name, email, avatar: name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) }
+          : u
+      ));
+      setShowEditModal(false);
+      setEditTarget(null);
+      setName('');
+      setEmail('');
+    }
+  };
+
   const handleDeleteUser = () => {
     if (deleteTarget) {
       setUsers(users.filter((u) => u.id !== deleteTarget.id));
@@ -110,16 +145,29 @@ export function CompleteUserManagement() {
     }
   };
 
+  const openEditModal = (user: User) => {
+    setEditTarget(user);
+    setName(user.name);
+    setEmail(user.email);
+    setShowEditModal(true);
+  };
+
   const openDeleteModal = (user: User) => {
     setDeleteTarget(user);
     setShowDeleteModal(true);
   };
 
+  const openDetailsModal = (user: User) => {
+    setDetailsTarget(user);
+    setShowDetailsModal(true);
+  };
+
   const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.type === userType &&
+      (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase())
+      user.role.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const totalUsers = users.length;
@@ -254,15 +302,46 @@ export function CompleteUserManagement() {
         </div>
       </div>
 
+      {/* User Type Tabs (Blue boxes in workflow) */}
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl blur-xl"></div>
+        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-4 border border-white/10">
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setUserType('internal')}
+              variant="ghost"
+              className={`h-11 px-5 rounded-xl font-medium transition-all ${
+                userType === 'internal' 
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              Internal Users
+            </Button>
+            <Button
+              onClick={() => setUserType('external')}
+              variant="ghost"
+              className={`h-11 px-5 rounded-xl font-medium transition-all ${
+                userType === 'external' 
+                  ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg' 
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              External Users
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Search Bar */}
       <div className="flex gap-3">
-        <div className="relative flex-1">
+        <div className="relative" style={{ width: '40%' }}>
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search users by name, email, or role"
-            className="pl-11 bg-[#1a1a2e]/60 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
+            className="w-full pl-11 bg-[#1a1a2e]/60 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
           />
         </div>
         <Button className="h-12 px-6 bg-[#1a1a2e]/60 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl">
@@ -330,6 +409,15 @@ export function CompleteUserManagement() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          onClick={() => openDetailsModal(user)}
+                          className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEditModal(user)}
                           className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -354,13 +442,13 @@ export function CompleteUserManagement() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="bg-[#1a1a2e] border-white/10">
                             <DropdownMenuItem className="text-white hover:bg-white/10">
-                              View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-white hover:bg-white/10">
                               Reset Password
                             </DropdownMenuItem>
                             <DropdownMenuItem className="text-white hover:bg-white/10">
                               Change Role
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-white hover:bg-white/10">
+                              Send Email
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -489,6 +577,153 @@ export function CompleteUserManagement() {
               className="bg-gradient-to-r from-[var(--cyan)] to-[var(--cyan)] hover:from-[var(--cyan)] hover:to-[var(--cyan)]"
             >
               Add User
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit User Modal */}
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Update user information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="editName" className="text-gray-300 mb-2 block">
+                Full Name
+              </Label>
+              <Input
+                id="editName"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="John Doe"
+                className={`bg-white/5 border-white/10 text-white placeholder:text-gray-500 ${
+                  errorName ? 'border-red-500' : ''
+                }`}
+              />
+              {errorName && <p className="text-red-400 text-sm mt-1">{errorName}</p>}
+            </div>
+            <div>
+              <Label htmlFor="editEmail" className="text-gray-300 mb-2 block">
+                Email Address
+              </Label>
+              <Input
+                id="editEmail"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="john.doe@company.com"
+                className={`bg-white/5 border-white/10 text-white placeholder:text-gray-500 ${
+                  errorEmail ? 'border-red-500' : ''
+                }`}
+              />
+              {errorEmail && <p className="text-red-400 text-sm mt-1">{errorEmail}</p>}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowEditModal(false);
+                setEditTarget(null);
+                setName('');
+                setEmail('');
+                setErrorName('');
+                setErrorEmail('');
+              }}
+              className="border-white/10 text-gray-400 hover:bg-white/10"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleEditUser}
+              className="bg-gradient-to-r from-[var(--cyan)] to-[var(--cyan)] hover:from-[var(--cyan)] hover:to-[var(--cyan)]"
+            >
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* User Details Modal */}
+      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white">User Details</DialogTitle>
+            <DialogDescription className="text-gray-400 mt-2">
+              View detailed user information
+            </DialogDescription>
+          </DialogHeader>
+          
+          {detailsTarget && (
+            <div className="py-4 space-y-4">
+              <div className="flex items-center gap-4 mb-6">
+                <div 
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl shadow-lg"
+                  style={{ 
+                    background: 'linear-gradient(to bottom right, #FF7619, rgba(154, 24, 251, 1))',
+                    boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                  }}
+                >
+                  {detailsTarget.avatar}
+                </div>
+                <div>
+                  <h3 className="text-white text-xl font-semibold">{detailsTarget.name}</h3>
+                  <p className="text-gray-400">{detailsTarget.email}</p>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10 space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Role</span>
+                  <Badge className="border" style={getRoleBadgeStyle(detailsTarget.role)}>
+                    {detailsTarget.role}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Status</span>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full ${getStatusColor(detailsTarget.status)}`}></div>
+                    <span className={detailsTarget.status === 'Active' ? 'text-green-400' : 'text-gray-400'}>
+                      {detailsTarget.status}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Type</span>
+                  <span className="text-white capitalize">{detailsTarget.type}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Last Active</span>
+                  <span className="text-white">{detailsTarget.lastActive}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDetailsModal(false)}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white"
+            >
+              Close
+            </Button>
+            <Button
+              onClick={() => {
+                setShowDetailsModal(false);
+                if (detailsTarget) {
+                  openEditModal(detailsTarget);
+                }
+              }}
+              className="bg-gradient-to-r from-[var(--cyan)] to-[var(--cyan)] hover:from-[var(--cyan)] hover:to-[var(--cyan)]"
+            >
+              <Edit2 className="w-4 h-4 mr-2" />
+              Edit User
             </Button>
           </DialogFooter>
         </DialogContent>

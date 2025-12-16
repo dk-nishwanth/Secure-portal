@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Folder, FolderPlus, Edit2, Trash2, Users, Eye, FileText, Image, Video, Music, File } from 'lucide-react';
+import { Folder, FolderPlus, Edit2, Trash2, Users, Eye, FileText, Image, Video, Music, File, ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';

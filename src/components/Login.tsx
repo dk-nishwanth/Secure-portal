@@ -5,7 +5,11 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Mail, Lock, Shield, FileCheck, Users, TrendingUp, Eye, EyeOff } from 'lucide-react';
 
-export function Login() {
+interface LoginProps {
+  onLoginSuccess?: (email: string, role: 'super-admin' | 'user') => void;
+}
+
+export function Login({ onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -18,12 +22,27 @@ export function Login() {
     if (email && password) {
       setName('Admin User');
       setRole('super-admin');
+      if (onLoginSuccess) {
+        onLoginSuccess(email, 'super-admin');
+      }
     }
   };
 
   const handleDemoLogin = (role: 'super-admin' | 'user', name: string) => {
+    const demoEmail = role === 'super-admin' ? 'admin@company.com' : 'user@company.com';
     setName(name);
-    setRole(role);
+    
+    if (role === 'user' && onLoginSuccess) {
+      // For regular users, trigger 2FA flow
+      onLoginSuccess(demoEmail, role);
+      // Don't set role yet, wait for 2FA
+    } else {
+      // Super admin bypasses 2FA
+      setRole(role);
+      if (onLoginSuccess) {
+        onLoginSuccess(demoEmail, role);
+      }
+    }
   };
 
   return (

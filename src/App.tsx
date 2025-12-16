@@ -1,9 +1,41 @@
+import { useState } from "react";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Login } from "./components/Login";
+import { TwoFactorAuth } from "./components/TwoFactorAuth";
 import { Dashboard } from "./components/Dashboard";
 
 function AppContent() {
-  const { role, loading } = useAuth();
+  const { role, loading, setRole } = useAuth();
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [pendingRole, setPendingRole] = useState<'super-admin' | 'user' | null>(null);
+
+  const handleLoginSuccess = (email: string, userRole: 'super-admin' | 'user') => {
+    if (userRole === 'user') {
+      // Regular users need 2FA
+      setUserEmail(email);
+      setPendingRole(userRole);
+      setShowTwoFactor(true);
+    } else {
+      // Super admin bypasses 2FA for now (can be changed)
+      // Role is already set in Login component
+    }
+  };
+
+  const handleTwoFactorVerify = () => {
+    // 2FA verified, now set the role
+    if (pendingRole) {
+      setRole(pendingRole);
+    }
+    setShowTwoFactor(false);
+    setPendingRole(null);
+  };
+
+  const handleTwoFactorBack = () => {
+    setShowTwoFactor(false);
+    setPendingRole(null);
+    setUserEmail("");
+  };
 
   if (loading) {
     return (
@@ -13,8 +45,12 @@ function AppContent() {
     );
   }
 
+  if (showTwoFactor) {
+    return <TwoFactorAuth email={userEmail} onVerify={handleTwoFactorVerify} onBack={handleTwoFactorBack} />;
+  }
+
   if (!role) {
-    return <Login />;
+    return <Login onLoginSuccess={handleLoginSuccess} />;
   }
 
   return <Dashboard />;

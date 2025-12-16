@@ -10,8 +10,8 @@ interface SidebarProps {
 export function Sidebar({ activePage, onPageChange }: SidebarProps) {
   const { role } = useAuth();
 
-  // 6 Main Menu Items based on workflow (Orange in annotations - Sidebar)
-  const menuItems = [
+  // Menu items based on user role
+  const superAdminMenuItems = [
     { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Super Admin Dashboard" },
     { id: "admin" as ActivePage, icon: UserCog, tooltip: "Admin Management" },
     { id: "users" as ActivePage, icon: Users, tooltip: "User Management" },
@@ -19,6 +19,14 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
   ];
+
+  const userMenuItems = [
+    { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Dashboard" },
+    { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
+    { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
+  ];
+
+  const menuItems = role === 'super-admin' ? superAdminMenuItems : userMenuItems;
 
   return (
     <aside className="fixed left-6 top-24 h-[calc(100vh-120px)] w-16 bg-[#1a1a2e]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center py-6 z-40">

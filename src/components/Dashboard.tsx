@@ -7,9 +7,12 @@ import { OrganizationsPage } from "./OrganizationsPage";
 import { FolderManagement } from "./FolderManagement";
 import { AdminModule } from "./AdminModule";
 import { AccessManagement } from "./AccessManagement";
+import { ActivityPage } from "./ActivityPage";
+import { ProfilePage } from "./ProfilePage";
+import { SettingsPage } from "./SettingsPage";
 import { useAuth } from "../contexts/AuthContext";
 
-export type ActivePage = "dashboard" | "admin" | "users" | "organizations" | "folders" | "access";
+export type ActivePage = "dashboard" | "admin" | "users" | "organizations" | "folders" | "access" | "files" | "shared" | "activity" | "profile" | "settings";
 
 export function Dashboard() {
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
@@ -17,7 +20,11 @@ export function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
-      <Header onNavigateToOrganizations={() => setActivePage("organizations")} />
+      <Header 
+        activePage={activePage}
+        onPageChange={setActivePage}
+        onNavigateToOrganizations={() => setActivePage("organizations")} 
+      />
       <div className="flex">
         <Sidebar activePage={activePage} onPageChange={setActivePage} />
         <main className="flex-1 p-6 pl-28">
@@ -27,6 +34,11 @@ export function Dashboard() {
           {activePage === "organizations" && <OrganizationsPage onBack={() => setActivePage("dashboard")} />}
           {activePage === "folders" && <FolderManagement onBack={() => setActivePage("dashboard")} />}
           {activePage === "access" && <AccessManagement onBack={() => setActivePage("dashboard")} />}
+          {activePage === "files" && <FolderManagement onBack={() => setActivePage("dashboard")} />}
+          {activePage === "shared" && <AccessManagement onBack={() => setActivePage("dashboard")} />}
+          {activePage === "activity" && <ActivityPage onBack={() => setActivePage("dashboard")} />}
+          {activePage === "profile" && <ProfilePage onBack={() => setActivePage("dashboard")} />}
+          {activePage === "settings" && <SettingsPage onBack={() => setActivePage("dashboard")} />}
         </main>
       </div>
     </div>

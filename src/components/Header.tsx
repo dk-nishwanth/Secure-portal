@@ -10,10 +10,12 @@ import {
 } from "./ui/dropdown-menu";
 
 interface HeaderProps {
+  activePage?: string;
+  onPageChange?: (page: any) => void;
   onNavigateToOrganizations?: () => void;
 }
 
-export function Header({ onNavigateToOrganizations }: HeaderProps) {
+export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrganizations }: HeaderProps) {
   const { name, currentOrgName, logout } = useAuth();
 
   // Get initials from name
@@ -46,20 +48,60 @@ export function Header({ onNavigateToOrganizations }: HeaderProps) {
 
         {/* Floating Navigation */}
         <nav className="hidden md:flex items-center gap-1 bg-[#1a1a2e]/80 backdrop-blur-xl rounded-full p-1.5 border border-white/10 shadow-2xl">
-          <button className="px-5 py-2.5 rounded-full text-white transition-all shadow-lg" style={{ background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' }}>
+          <button 
+            onClick={() => onPageChange?.('dashboard')}
+            className={`px-5 py-2.5 rounded-full transition-all ${
+              activePage === 'dashboard'
+                ? 'text-white shadow-lg'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+            style={activePage === 'dashboard' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+          >
             Dashboard
           </button>
-          <button className="px-5 py-2.5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-            Reports
+          <button 
+            onClick={() => onPageChange?.('files')}
+            className={`px-5 py-2.5 rounded-full transition-all ${
+              activePage === 'files'
+                ? 'text-white shadow-lg'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+            style={activePage === 'files' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+          >
+            Files
           </button>
-          <button className="px-5 py-2.5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-            Documents
+          <button 
+            onClick={() => onPageChange?.('shared')}
+            className={`px-5 py-2.5 rounded-full transition-all ${
+              activePage === 'shared'
+                ? 'text-white shadow-lg'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+            style={activePage === 'shared' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+          >
+            Shared
           </button>
-          <button className="px-5 py-2.5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-            History
+          <button 
+            onClick={() => onPageChange?.('activity')}
+            className={`px-5 py-2.5 rounded-full transition-all ${
+              activePage === 'activity'
+                ? 'text-white shadow-lg'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+            style={activePage === 'activity' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+          >
+            Activity
           </button>
-          <button className="px-5 py-2.5 rounded-full text-gray-400 hover:text-white hover:bg-white/10 transition-all">
-            Settings
+          <button 
+            onClick={() => onPageChange?.('profile')}
+            className={`px-5 py-2.5 rounded-full transition-all ${
+              activePage === 'profile'
+                ? 'text-white shadow-lg'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+            style={activePage === 'profile' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+          >
+            Profile
           </button>
         </nav>
 
@@ -121,38 +163,14 @@ export function Header({ onNavigateToOrganizations }: HeaderProps) {
               <div className="py-2">
                 <DropdownMenuItem 
                   className="text-white hover:bg-white/10 cursor-pointer px-3 py-2"
-                  onClick={() => {/* Navigate to profile */}}
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  My Profile
-                </DropdownMenuItem>
-                
-                <DropdownMenuItem 
-                  className="text-white hover:bg-white/10 cursor-pointer px-3 py-2"
-                  onClick={onNavigateToOrganizations}
-                >
-                  <Building2 className="w-4 h-4 mr-2" />
-                  Organizations
-                  {currentOrgName && (
-                    <span className="ml-auto text-xs text-gray-400 truncate max-w-[100px]">
-                      {currentOrgName}
-                    </span>
-                  )}
-                </DropdownMenuItem>
-
-                <DropdownMenuItem 
-                  className="text-white hover:bg-white/10 cursor-pointer px-3 py-2"
-                  onClick={() => {/* Navigate to settings */}}
+                  onClick={() => onPageChange?.('settings')}
                 >
                   <Settings className="w-4 h-4 mr-2" />
                   Settings
                 </DropdownMenuItem>
-              </div>
 
-              <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuSeparator className="bg-white/10" />
 
-              {/* Logout */}
-              <div className="py-2">
                 <DropdownMenuItem 
                   className="text-red-400 hover:bg-red-500/10 cursor-pointer px-3 py-2"
                   onClick={logout}

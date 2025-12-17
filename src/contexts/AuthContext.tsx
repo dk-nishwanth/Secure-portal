@@ -24,7 +24,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session
+    // Clear any existing session on app start to always show login screen
+    // Comment out the lines below if you want to persist login sessions
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('currentOrgId');
+    localStorage.removeItem('currentOrgName');
+    
+    setLoading(false);
+    
+    // Uncomment below to enable session persistence (auto-login)
+    /*
     const storedRole = localStorage.getItem('userRole') as UserRole;
     const storedName = localStorage.getItem('userName');
     const storedOrgId = localStorage.getItem('currentOrgId');
@@ -39,8 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setCurrentOrgId(storedOrgId);
       setCurrentOrgName(storedOrgName);
     }
-    
-    setLoading(false);
+    */
   }, []);
 
   const handleSetRole = (newRole: UserRole) => {

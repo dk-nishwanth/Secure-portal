@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-export type UserRole = 'super-admin' | 'user' | null;
+export type UserRole = 'super-admin' | 'admin' | 'user' | null;
 
 interface AuthContextType {
   name: string | null;

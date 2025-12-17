@@ -30,8 +30,8 @@ export function Dashboard() {
         <main className="flex-1 p-6 pl-28">
           {activePage === "dashboard" && <RoleBasedDashboard />}
           {activePage === "admin" && role === "super-admin" && <AdminModule onBack={() => setActivePage("dashboard")} />}
-          {activePage === "users" && role === "super-admin" && <CompleteUserManagement />}
-          {activePage === "organizations" && <OrganizationsPage onBack={() => setActivePage("dashboard")} />}
+          {activePage === "users" && (role === "super-admin" || role === "admin") && <CompleteUserManagement />}
+          {activePage === "organizations" && role === "super-admin" && <OrganizationsPage onBack={() => setActivePage("dashboard")} />}
           {activePage === "folders" && <FolderManagement onBack={() => setActivePage("dashboard")} />}
           {activePage === "access" && <AccessManagement onBack={() => setActivePage("dashboard")} />}
           {activePage === "files" && <FolderManagement onBack={() => setActivePage("dashboard")} />}

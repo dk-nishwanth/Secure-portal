@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Bell, LogOut, Moon, Settings, Building2, User, ChevronDown } from "lucide-react";
 import { Button } from "./ui/button";
 import { useAuth } from "../contexts/AuthContext";
+import { EmailNotifications } from "./EmailNotifications";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +18,8 @@ interface HeaderProps {
 }
 
 export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrganizations }: HeaderProps) {
-  const { name, currentOrgName, logout } = useAuth();
+  const { name, currentOrgName, logout, role } = useAuth();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Get initials from name
   const getInitials = (fullName: string | null) => {
@@ -48,6 +51,7 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
 
         {/* Floating Navigation */}
         <nav className="hidden md:flex items-center gap-1 bg-[#1a1a2e]/80 backdrop-blur-xl rounded-full p-1.5 border border-white/10 shadow-2xl">
+          {/* Dashboard - shown for all roles */}
           <button 
             onClick={() => onPageChange?.('dashboard')}
             className={`px-5 py-2.5 rounded-full transition-all ${
@@ -59,28 +63,49 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           >
             Dashboard
           </button>
+
+          {/* Super Admin & Admin - User Management */}
+          {(role === 'super-admin' || role === 'admin') && (
+            <button 
+              onClick={() => onPageChange?.('users')}
+              className={`px-5 py-2.5 rounded-full transition-all ${
+                activePage === 'users'
+                  ? 'text-white shadow-lg'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              }`}
+              style={activePage === 'users' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+            >
+              Users
+            </button>
+          )}
+
+          {/* All roles - Folder Management */}
           <button 
-            onClick={() => onPageChange?.('files')}
+            onClick={() => onPageChange?.('folders')}
             className={`px-5 py-2.5 rounded-full transition-all ${
-              activePage === 'files'
+              activePage === 'folders' || activePage === 'files'
                 ? 'text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-white/10'
             }`}
-            style={activePage === 'files' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+            style={activePage === 'folders' || activePage === 'files' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
           >
-            Files
+            Folders
           </button>
+
+          {/* All roles - Access Management */}
           <button 
-            onClick={() => onPageChange?.('shared')}
+            onClick={() => onPageChange?.('access')}
             className={`px-5 py-2.5 rounded-full transition-all ${
-              activePage === 'shared'
+              activePage === 'access' || activePage === 'shared'
                 ? 'text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-white/10'
             }`}
-            style={activePage === 'shared' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
+            style={activePage === 'access' || activePage === 'shared' ? { background: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' } : undefined}
           >
-            Shared
+            Access
           </button>
+
+          {/* All roles - Activity */}
           <button 
             onClick={() => onPageChange?.('activity')}
             className={`px-5 py-2.5 rounded-full transition-all ${
@@ -92,6 +117,8 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           >
             Activity
           </button>
+
+          {/* All roles - Profile */}
           <button 
             onClick={() => onPageChange?.('profile')}
             className={`px-5 py-2.5 rounded-full transition-all ${
@@ -124,6 +151,7 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           <Button 
             size="icon" 
             variant="ghost" 
+            onClick={() => setShowNotifications(true)}
             className="rounded-full hover:bg-white/10 text-gray-400 hover:text-white relative w-10 h-10"
           >
             <Bell className="w-5 h-5" />
@@ -183,6 +211,12 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           </DropdownMenu>
         </div>
       </div>
+
+      {/* Email Notifications Modal */}
+      <EmailNotifications 
+        open={showNotifications} 
+        onClose={() => setShowNotifications(false)} 
+      />
     </header>
   );
 }

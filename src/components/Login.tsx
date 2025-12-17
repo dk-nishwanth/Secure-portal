@@ -6,7 +6,7 @@ import { Label } from './ui/label';
 import { Mail, Lock, Shield, FileCheck, Users, TrendingUp, Eye, EyeOff } from 'lucide-react';
 
 interface LoginProps {
-  onLoginSuccess?: (email: string, role: 'super-admin' | 'user') => void;
+  onLoginSuccess?: (email: string, role: 'super-admin' | 'admin' | 'user') => void;
 }
 
 export function Login({ onLoginSuccess }: LoginProps) {
@@ -28,8 +28,10 @@ export function Login({ onLoginSuccess }: LoginProps) {
     }
   };
 
-  const handleDemoLogin = (role: 'super-admin' | 'user', name: string) => {
-    const demoEmail = role === 'super-admin' ? 'admin@company.com' : 'user@company.com';
+  const handleDemoLogin = (role: 'super-admin' | 'admin' | 'user', name: string) => {
+    const demoEmail = role === 'super-admin' ? 'superadmin@company.com' : 
+                      role === 'admin' ? 'admin@company.com' : 
+                      'user@company.com';
     setName(name);
     
     if (role === 'user' && onLoginSuccess) {
@@ -37,7 +39,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
       onLoginSuccess(demoEmail, role);
       // Don't set role yet, wait for 2FA
     } else {
-      // Super admin bypasses 2FA
+      // Super admin and admin bypass 2FA
       setRole(role);
       if (onLoginSuccess) {
         onLoginSuccess(demoEmail, role);
@@ -75,16 +77,13 @@ export function Login({ onLoginSuccess }: LoginProps) {
             <div>
               <Label htmlFor="email" className="text-gray-300 mb-2 block">Email Address</Label>
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-                  <Mail className="w-5 h-5 text-gray-500" />
-                </div>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@superadmin.com"
+                  placeholder=""
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-14 pr-4 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
+                  className="px-4 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
                   onFocus={(e) => {
                     e.target.style.borderColor = 'rgba(255, 118, 25, 0.5)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(255, 118, 25, 0.2)';
@@ -100,16 +99,13 @@ export function Login({ onLoginSuccess }: LoginProps) {
             <div>
               <Label htmlFor="password" className="text-gray-300 mb-2 block">Password</Label>
               <div className="relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-                  <Lock className="w-5 h-5 text-gray-500" />
-                </div>
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder=""
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-14 pr-14 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
+                  className="pl-4 pr-14 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
                   onFocus={(e) => {
                     e.target.style.borderColor = 'rgba(255, 118, 25, 0.5)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(255, 118, 25, 0.2)';
@@ -164,7 +160,7 @@ export function Login({ onLoginSuccess }: LoginProps) {
           <div className="space-y-3">
             <Button
               type="button"
-              onClick={() => handleDemoLogin('super-admin', 'Admin User')}
+              onClick={() => handleDemoLogin('super-admin', 'Super Admin')}
               variant="outline"
               className="w-full h-12 border-white/10 bg-[#1a1a2e]/50 text-white hover:bg-[#1a1a2e] rounded-xl transition-all"
               style={{ '--hover-border-color': 'rgba(255, 118, 25, 0.5)' } as CSSProperties & { [key: string]: string }}
@@ -172,6 +168,15 @@ export function Login({ onLoginSuccess }: LoginProps) {
               onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'}
             >
               <Shield className="w-5 h-5 mr-2" style={{ color: '#FF7619' }} />
+              Demo Login as Super Admin
+            </Button>
+            <Button
+              type="button"
+              onClick={() => handleDemoLogin('admin', 'Admin User')}
+              variant="outline"
+              className="w-full h-12 border-white/10 bg-[#1a1a2e]/50 text-white hover:bg-[#1a1a2e] hover:border-blue-500/50 rounded-xl transition-all"
+            >
+              <Shield className="w-5 h-5 mr-2 text-blue-500" />
               Demo Login as Admin
             </Button>
             <Button

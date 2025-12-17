@@ -20,13 +20,22 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
   ];
 
+  const adminMenuItems = [
+    { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Admin Dashboard" },
+    { id: "users" as ActivePage, icon: Users, tooltip: "User Management" },
+    { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
+    { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
+  ];
+
   const userMenuItems = [
     { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Dashboard" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
   ];
 
-  const menuItems = role === 'super-admin' ? superAdminMenuItems : userMenuItems;
+  const menuItems = role === 'super-admin' ? superAdminMenuItems : 
+                    role === 'admin' ? adminMenuItems : 
+                    userMenuItems;
 
   return (
     <aside className="fixed left-6 top-24 h-[calc(100vh-120px)] w-16 bg-[#1a1a2e]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center py-6 z-40">

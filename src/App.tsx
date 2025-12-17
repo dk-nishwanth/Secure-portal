@@ -8,16 +8,16 @@ function AppContent() {
   const { role, loading, setRole } = useAuth();
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [pendingRole, setPendingRole] = useState<'super-admin' | 'user' | null>(null);
+  const [pendingRole, setPendingRole] = useState<'super-admin' | 'admin' | 'user' | null>(null);
 
-  const handleLoginSuccess = (email: string, userRole: 'super-admin' | 'user') => {
+  const handleLoginSuccess = (email: string, userRole: 'super-admin' | 'admin' | 'user') => {
     if (userRole === 'user') {
       // Regular users need 2FA
       setUserEmail(email);
       setPendingRole(userRole);
       setShowTwoFactor(true);
     } else {
-      // Super admin bypasses 2FA for now (can be changed)
+      // Super admin and admin bypass 2FA for now (can be changed)
       // Role is already set in Login component
     }
   };

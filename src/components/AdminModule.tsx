@@ -46,7 +46,10 @@ export function AdminModule({ onBack }: AdminModuleProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
   const [adminName, setAdminName] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
   const [adminRole, setAdminRole] = useState('Admin');
@@ -107,6 +110,22 @@ export function AdminModule({ onBack }: AdminModuleProps) {
   const openDeleteModal = (admin: Admin) => {
     setSelectedAdmin(admin);
     setShowDeleteModal(true);
+  };
+
+  const openEmailModal = (admin: Admin) => {
+    setSelectedAdmin(admin);
+    setShowEmailModal(true);
+  };
+
+  const handleSendEmail = () => {
+    if (selectedAdmin && emailSubject.trim() && emailMessage.trim()) {
+      // In production, this would call API to send email
+      console.log('Sending email to:', selectedAdmin.email, { subject: emailSubject, message: emailMessage });
+      setShowEmailModal(false);
+      setSelectedAdmin(null);
+      setEmailSubject('');
+      setEmailMessage('');
+    }
   };
 
   // Dashboard Metrics
@@ -287,7 +306,12 @@ export function AdminModule({ onBack }: AdminModuleProps) {
                             >
                               <Edit2 className="w-4 h-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => openEmailModal(admin)}
+                              className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
+                            >
                               <Mail className="w-4 h-4" />
                             </Button>
                             <Button 
@@ -501,6 +525,85 @@ export function AdminModule({ onBack }: AdminModuleProps) {
               className="bg-red-500 hover:bg-red-600 h-12 px-6 rounded-xl"
             >
               Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Service Modal */}
+      <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ 
+                  backgroundColor: '#FF7619',
+                  boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                }}
+              >
+                <Mail className="w-5 h-5 text-white" />
+              </div>
+              Send Email
+            </DialogTitle>
+            <DialogDescription className="text-gray-400 mt-2">
+              Send an email to {selectedAdmin?.name} ({selectedAdmin?.email})
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            <div>
+              <Label htmlFor="emailSubject" className="text-gray-300 mb-2 block font-medium">
+                Subject
+              </Label>
+              <Input
+                id="emailSubject"
+                value={emailSubject}
+                onChange={(e) => setEmailSubject(e.target.value)}
+                placeholder="Enter email subject"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="emailMessage" className="text-gray-300 mb-2 block font-medium">
+                Message
+              </Label>
+              <textarea
+                id="emailMessage"
+                value={emailMessage}
+                onChange={(e) => setEmailMessage(e.target.value)}
+                placeholder="Enter your message"
+                rows={6}
+                className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl focus:border-[#FF7619] focus:outline-none p-3 resize-none"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowEmailModal(false);
+                setSelectedAdmin(null);
+                setEmailSubject('');
+                setEmailMessage('');
+              }}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSendEmail}
+              disabled={!emailSubject.trim() || !emailMessage.trim()}
+              className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold disabled:opacity-50"
+              style={{ 
+                backgroundColor: '#FF7619',
+                boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+              }}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Send Email
             </Button>
           </DialogFooter>
         </DialogContent>

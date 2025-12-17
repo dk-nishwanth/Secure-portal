@@ -1,7 +1,19 @@
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Users, Files, FolderOpen, Shield, AlertTriangle, Activity, TrendingUp, Plus, HardDrive, Upload, Clock } from "lucide-react";
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Progress } from "./ui/progress";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 
 const securityData = [
   { month: "Sep", blocked: 45, allowed: 120 },
@@ -29,14 +41,41 @@ const recentActivity = [
 ];
 
 function SuperAdminDashboard() {
+  const [showCreateOrgModal, setShowCreateOrgModal] = useState(false);
+  const [orgName, setOrgName] = useState('');
+
+  const handleCreateOrganization = () => {
+    if (orgName.trim()) {
+      // In production, this would call API to create organization
+      console.log('Creating organization:', orgName);
+      setShowCreateOrgModal(false);
+      setOrgName('');
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="space-y-1">
-        <h1 className="text-3xl text-white">
-          Good Morning <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Admin!</span>
-        </h1>
-        <p className="text-gray-400">Smart task tracking to keep your security workflow moving smoothly</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl text-white">
+              Good Morning <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Admin!</span>
+            </h1>
+            <p className="text-gray-400">Smart task tracking to keep your security workflow moving smoothly</p>
+          </div>
+          <Button
+            onClick={() => setShowCreateOrgModal(true)}
+            className="h-12 px-6 rounded-xl transition-all shadow-lg text-white font-semibold"
+            style={{ 
+              backgroundColor: '#FF7619',
+              boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+            }}
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Create Organization
+          </Button>
+        </div>
       </div>
 
       {/* Main Grid Layout */}
@@ -300,6 +339,70 @@ function SuperAdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Create Organization Modal */}
+      <Dialog open={showCreateOrgModal} onOpenChange={setShowCreateOrgModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ 
+                  backgroundColor: '#FF7619',
+                  boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                }}
+              >
+                <Plus className="w-5 h-5 text-white" />
+              </div>
+              Create New Organization
+            </DialogTitle>
+            <DialogDescription className="text-gray-400 mt-2">
+              Add a new organization to the system
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            <div>
+              <Label htmlFor="dashboardOrgName" className="text-gray-300 mb-2 block font-medium">
+                Organization Name
+              </Label>
+              <Input
+                id="dashboardOrgName"
+                value={orgName}
+                onChange={(e) => setOrgName(e.target.value)}
+                placeholder="Enter organization name"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+                onKeyDown={(e) => e.key === 'Enter' && handleCreateOrganization()}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCreateOrgModal(false);
+                setOrgName('');
+              }}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateOrganization}
+              disabled={!orgName.trim()}
+              className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold disabled:opacity-50"
+              style={{ 
+                backgroundColor: '#FF7619',
+                boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Organization
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -489,11 +592,185 @@ function UserDashboard() {
   );
 }
 
+function AdminDashboard() {
+  const { name } = useAuth();
+  
+  return (
+    <div className="space-y-6">
+      {/* Welcome Section */}
+      <div className="space-y-1">
+        <h1 className="text-3xl text-white">
+          Welcome back <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">{name || 'Admin'}!</span>
+        </h1>
+        <p className="text-gray-400">Manage users, folders, and access permissions from your admin dashboard</p>
+      </div>
+
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Total Users Stats */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-3xl blur-xl"></div>
+          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                <Users className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-white">Total Users</span>
+            </div>
+            <div>
+              <p className="text-4xl text-white mb-2">847</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">Compare to last month</span>
+                <span className="text-green-400 text-sm">+8%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Folders */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-orange-600/10 rounded-3xl blur-xl"></div>
+          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                <FolderOpen className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-white">Total Folders</span>
+            </div>
+            <div>
+              <p className="text-4xl text-white mb-2">256</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">Internal & External</span>
+                <span className="text-green-400 text-sm">+5%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Access Requests */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-3xl blur-xl"></div>
+          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-white">Access Requests</span>
+            </div>
+            <div>
+              <p className="text-4xl text-white mb-2">23</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">Pending approval</span>
+                <span className="text-yellow-400 text-sm">Review</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Dashboard Metrics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* User Management Overview */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-3xl blur-xl"></div>
+          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+            <h3 className="text-white text-lg mb-6">User Management</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+                <div>
+                  <p className="text-gray-400 text-sm">Internal Users</p>
+                  <p className="text-2xl text-white">542</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+                <div>
+                  <p className="text-gray-400 text-sm">External Users</p>
+                  <p className="text-2xl text-white">305</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Folder Management Overview */}
+        <div className="relative group">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-orange-600/10 rounded-3xl blur-xl"></div>
+          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+            <h3 className="text-white text-lg mb-6">Folder Management</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+                <div>
+                  <p className="text-gray-400 text-sm">Internal Folders</p>
+                  <p className="text-2xl text-white">178</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                  <FolderOpen className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5">
+                <div>
+                  <p className="text-gray-400 text-sm">External Folders</p>
+                  <p className="text-2xl text-white">78</p>
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+                  <FolderOpen className="w-6 h-6 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="relative group">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 rounded-3xl blur-xl"></div>
+        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
+          <h3 className="text-white text-lg mb-6">Recent Admin Activity</h3>
+          <div className="space-y-3">
+            {[
+              { action: 'Created user account for john.doe@company.com', time: '10 mins ago', icon: Users, color: 'text-blue-400' },
+              { action: 'Provided edit access to Marketing folder', time: '25 mins ago', icon: Shield, color: 'text-purple-400' },
+              { action: 'Created new internal folder "Q1 Reports"', time: '1 hour ago', icon: FolderOpen, color: 'text-orange-400' },
+              { action: 'Updated user permissions for external users', time: '2 hours ago', icon: Shield, color: 'text-green-400' },
+            ].map((activity, index) => {
+              const Icon = activity.icon;
+              return (
+                <div key={index} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center flex-shrink-0">
+                    <Icon className={`w-5 h-5 ${activity.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm">{activity.action}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Clock className="w-3 h-3 text-gray-500" />
+                      <p className="text-xs text-gray-500">{activity.time}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function RoleBasedDashboard() {
   const { role } = useAuth();
 
   if (role === 'super-admin') {
     return <SuperAdminDashboard />;
+  }
+  
+  if (role === 'admin') {
+    return <AdminDashboard />;
   }
 
   return <UserDashboard />;

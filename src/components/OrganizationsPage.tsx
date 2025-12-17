@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Building2, Plus, Users, Search, Eye, Edit2, Trash2, UserCheck, Briefcase, GraduationCap, ArrowLeft } from 'lucide-react';
+import { Building2, Plus, Users, Search, Eye, Edit2, Trash2, UserCheck, Briefcase, GraduationCap, ArrowLeft, Mail } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -61,8 +61,12 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Organization | null>(null);
   const [editTarget, setEditTarget] = useState<Organization | null>(null);
+  const [emailTarget, setEmailTarget] = useState<Organization | null>(null);
+  const [emailSubject, setEmailSubject] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
   const [orgName, setOrgName] = useState('');
   const [employees, setEmployees] = useState('');
   const [interns, setInterns] = useState('');
@@ -157,6 +161,22 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
   const openDeleteModal = (org: Organization) => {
     setDeleteTarget(org);
     setShowDeleteModal(true);
+  };
+
+  const openEmailModal = (org: Organization) => {
+    setEmailTarget(org);
+    setShowEmailModal(true);
+  };
+
+  const handleSendEmail = () => {
+    if (emailTarget && emailSubject.trim() && emailMessage.trim()) {
+      // In production, this would call API to send email to all organization members
+      console.log('Sending email to organization:', emailTarget.name, { subject: emailSubject, message: emailMessage });
+      setShowEmailModal(false);
+      setEmailTarget(null);
+      setEmailSubject('');
+      setEmailMessage('');
+    }
   };
 
   const filteredOrgs = organizations.filter(org => 
@@ -258,6 +278,17 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
                       className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white backdrop-blur-xl"
                     >
                       <Edit2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEmailModal(org);
+                      }}
+                      className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white backdrop-blur-xl"
+                    >
+                      <Mail className="w-4 h-4" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -502,6 +533,97 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
                 className="bg-red-500 hover:bg-red-600 h-12 px-6 rounded-xl"
               >
                 Delete
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Email Service Modal */}
+        <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+          <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                <div 
+                  className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                  style={{ 
+                    backgroundColor: '#FF7619',
+                    boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                  }}
+                >
+                  <Mail className="w-5 h-5 text-white" />
+                </div>
+                Send Email to Organization
+              </DialogTitle>
+              <DialogDescription className="text-gray-400 mt-2">
+                Send an email to all members of {emailTarget?.name} ({emailTarget?.totalMembers} members)
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-5 py-4">
+              <div>
+                <Label htmlFor="orgEmailSubject" className="text-gray-300 mb-2 block font-medium">
+                  Subject
+                </Label>
+                <Input
+                  id="orgEmailSubject"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Enter email subject"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="orgEmailMessage" className="text-gray-300 mb-2 block font-medium">
+                  Message
+                </Label>
+                <textarea
+                  id="orgEmailMessage"
+                  value={emailMessage}
+                  onChange={(e) => setEmailMessage(e.target.value)}
+                  placeholder="Enter your message"
+                  rows={6}
+                  className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl focus:border-[#FF7619] focus:outline-none p-3 resize-none"
+                />
+              </div>
+
+              <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-500/20">
+                <div className="flex gap-3">
+                  <Mail className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-white text-sm mb-1">Email Recipients</p>
+                    <p className="text-gray-400 text-xs">
+                      This email will be sent to all {emailTarget?.totalMembers} members of {emailTarget?.name}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <DialogFooter className="gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowEmailModal(false);
+                  setEmailTarget(null);
+                  setEmailSubject('');
+                  setEmailMessage('');
+                }}
+                className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSendEmail}
+                disabled={!emailSubject.trim() || !emailMessage.trim()}
+                className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold disabled:opacity-50"
+                style={{ 
+                  backgroundColor: '#FF7619',
+                  boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                }}
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Send Email
               </Button>
             </DialogFooter>
           </DialogContent>

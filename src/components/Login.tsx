@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Mail, Lock, Shield, FileCheck, Users, TrendingUp, Eye, EyeOff } from 'lucide-react';
+import { Shield, FileCheck, Users, TrendingUp, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 
 interface LoginProps {
   onLoginSuccess?: (email: string, role: 'super-admin' | 'admin' | 'user') => void;
@@ -13,18 +13,61 @@ export function Login({ onLoginSuccess }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
   const { setRole, setName } = useAuth();
 
-  const handleLogin = (e: FormEvent) => {
+  // Enhanced email validation
+  const validateEmail = (email: string): string | undefined => {
+    if (!email) return 'Email is required';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return 'Please enter a valid email address';
+    return undefined;
+  };
+
+  // Enhanced password validation
+  const validatePassword = (password: string): string | undefined => {
+    if (!password) return 'Password is required';
+    if (password.length < 6) return 'Password must be at least 6 characters';
+    return undefined;
+  };
+
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
-    // In production, this would call POST /auth/login
-    // For now, we'll use demo logic
-    if (email && password) {
+    
+    // Clear previous errors
+    setErrors({});
+    
+    // Validate inputs
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    
+    if (emailError || passwordError) {
+      setErrors({
+        email: emailError,
+        password: passwordError,
+      });
+      return;
+    }
+
+    // Simulate API call with loading state
+    setIsLoading(true);
+    
+    try {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // In production, this would call POST /auth/login
+      // For now, we'll use demo logic
       setName('Admin User');
       setRole('super-admin');
       if (onLoginSuccess) {
         onLoginSuccess(email, 'super-admin');
       }
+    } catch (error) {
+      setErrors({ general: 'Login failed. Please try again.' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,57 +116,98 @@ export function Login({ onLoginSuccess }: LoginProps) {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-5" noValidate>
+            {/* General Error Message */}
+            {errors.general && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3" role="alert">
+                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                <p className="text-red-400 text-sm">{errors.general}</p>
+              </div>
+            )}
+
             <div>
-              <Label htmlFor="email" className="text-gray-300 mb-2 block">Email Address</Label>
+              <Label htmlFor="email" className="text-gray-300 mb-2 block">
+                Email Address <span className="text-red-400">*</span>
+              </Label>
               <div className="relative">
                 <Input
                   id="email"
                   type="email"
-                  placeholder=""
+                  placeholder="admin@company.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="px-4 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 118, 25, 0.5)';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 118, 25, 0.2)';
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (errors.email) setErrors({ ...errors, email: undefined });
                   }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                    e.target.style.boxShadow = 'none';
+                  onBlur={() => {
+                    const error = validateEmail(email);
+                    if (error) setErrors({ ...errors, email: error });
                   }}
+                  disabled={isLoading}
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  className={`px-4 bg-[#1a1a2e]/50 text-white placeholder:text-gray-500 h-12 rounded-xl transition-all ${
+                    errors.email 
+                      ? 'border-red-500/50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20' 
+                      : 'border-white/10 focus:border-[#FF7619]/50 focus:ring-2 focus:ring-[#FF7619]/20'
+                  }`}
                 />
+                {errors.email && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <AlertCircle className="w-5 h-5 text-red-400" />
+                  </div>
+                )}
               </div>
+              {errors.email && (
+                <p id="email-error" className="text-red-400 text-sm mt-1.5 flex items-center gap-1">
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             <div>
-              <Label htmlFor="password" className="text-gray-300 mb-2 block">Password</Label>
+              <Label htmlFor="password" className="text-gray-300 mb-2 block">
+                Password <span className="text-red-400">*</span>
+              </Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder=""
+                  placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-4 pr-14 bg-[#1a1a2e]/50 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
-                  onFocus={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 118, 25, 0.5)';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(255, 118, 25, 0.2)';
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (errors.password) setErrors({ ...errors, password: undefined });
                   }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                    e.target.style.boxShadow = 'none';
+                  onBlur={() => {
+                    const error = validatePassword(password);
+                    if (error) setErrors({ ...errors, password: error });
                   }}
+                  disabled={isLoading}
+                  aria-invalid={!!errors.password}
+                  aria-describedby={errors.password ? "password-error" : undefined}
+                  className={`pl-4 pr-14 bg-[#1a1a2e]/50 text-white placeholder:text-gray-500 h-12 rounded-xl transition-all ${
+                    errors.password 
+                      ? 'border-red-500/50 focus:border-red-500 focus:ring-2 focus:ring-red-500/20' 
+                      : 'border-white/10 focus:border-[#FF7619]/50 focus:ring-2 focus:ring-[#FF7619]/20'
+                  }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors z-10 focus:outline-none"
+                  disabled={isLoading}
+                  tabIndex={0}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors z-10 focus:outline-none focus:ring-2 focus:ring-[#FF7619]/50 rounded"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              {errors.password && (
+                <p id="password-error" className="text-red-400 text-sm mt-1.5 flex items-center gap-1">
+                  {errors.password}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center justify-end">
@@ -134,15 +218,22 @@ export function Login({ onLoginSuccess }: LoginProps) {
 
             <Button
               type="submit"
-              className="w-full h-12 text-white rounded-xl shadow-lg transition-all"
+              disabled={isLoading}
+              className="w-full h-12 text-white rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{ 
-                backgroundColor: '#FF7619',
+                backgroundColor: isLoading ? 'rgba(255, 118, 25, 0.7)' : '#FF7619',
                 boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 118, 25, 0.9)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FF7619'}
+              aria-busy={isLoading}
             >
-              Sign In
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Signing in...</span>
+                </>
+              ) : (
+                'Sign In'
+              )}
             </Button>
           </form>
 

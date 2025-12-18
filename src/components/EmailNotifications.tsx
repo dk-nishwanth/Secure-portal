@@ -159,13 +159,13 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
   return (
     <>
       {/* Main Notifications Panel */}
-      <Dialog open={open} onOpenChange={onClose}>
-        <DialogPortal>
-          <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
-          <DialogPrimitive.Content className="bg-[#0f0f1a] border border-white/20 text-white max-w-2xl max-h-[80vh] overflow-hidden flex flex-col shadow-2xl fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%] rounded-2xl p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200">
-          <DialogHeader>
+      {open && (
+        <>
+          {/* Notification Panel */}
+          <div className="border border-gray-200 w-[500px] max-h-[600px] overflow-hidden flex flex-col shadow-2xl fixed z-[100] rounded-2xl p-6 animate-in fade-in slide-in-from-top-2 duration-200" style={{ backgroundColor: '#ffffff', opacity: 1, top: '56px', right: '100px' }}>
+          <div className="mb-4">
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <div className="text-2xl font-bold text-gray-900 flex items-center gap-3">
                 <div 
                   className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
                   style={{ 
@@ -188,22 +188,22 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
                     {unreadCount} new
                   </Badge>
                 )}
-              </DialogTitle>
+              </div>
               {unreadCount > 0 && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={markAllAsRead}
-                  className="text-gray-400 hover:text-white hover:bg-[#1a1a2e] h-8 px-3 rounded-lg"
+                  className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 h-8 px-3 rounded-lg"
                 >
                   Mark all as read
                 </Button>
               )}
             </div>
-            <DialogDescription className="text-gray-400 mt-2">
+            <p className="text-gray-500 text-sm mt-2">
               View your file sharing and access notifications
-            </DialogDescription>
-          </DialogHeader>
+            </p>
+          </div>
 
           <div className="flex-1 overflow-y-auto py-4 space-y-3">
             {notifications.length === 0 ? (
@@ -220,24 +220,22 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
                     notification.read ? 'opacity-60' : ''
                   }`}
                 >
-                  <div className={`bg-gradient-to-r ${getNotificationColor(notification.type)} rounded-2xl p-[1px] hover:p-[2px] transition-all`}>
-                    <div className="bg-[#1a1a2e] rounded-2xl p-4 hover:bg-[#1f1f33] transition-all">
-                      <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getNotificationColor(notification.type)} flex items-center justify-center flex-shrink-0`}>
-                          {getNotificationIcon(notification.type)}
+                  <div className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-all border border-gray-200">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getNotificationColor(notification.type)} flex items-center justify-center flex-shrink-0`}>
+                        {getNotificationIcon(notification.type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <h4 className="text-gray-900 font-semibold">{notification.title}</h4>
+                          {!notification.read && (
+                            <div className="w-2 h-2 rounded-full bg-[#FF7619] flex-shrink-0 mt-1.5 animate-pulse"></div>
+                          )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2 mb-1">
-                            <h4 className="text-white font-semibold">{notification.title}</h4>
-                            {!notification.read && (
-                              <div className="w-2 h-2 rounded-full bg-[#FF7619] flex-shrink-0 mt-1.5 animate-pulse"></div>
-                            )}
-                          </div>
-                          <p className="text-gray-400 text-sm mb-3">{notification.message}</p>
-                          <div className="flex items-center justify-between">
-                            <p className="text-xs text-gray-500">{formatTimestamp(notification.timestamp)}</p>
-                            <p className="text-xs text-gray-500">From: {notification.sender}</p>
-                          </div>
+                        <p className="text-gray-600 text-sm mb-3">{notification.message}</p>
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs text-gray-500">{formatTimestamp(notification.timestamp)}</p>
+                          <p className="text-xs text-gray-500">From: {notification.sender}</p>
                         </div>
                       </div>
                     </div>
@@ -247,22 +245,28 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
             )}
           </div>
 
-          <DialogFooter>
+          <div className="pt-4 border-t border-gray-200">
             <Button
-              variant="outline"
               onClick={onClose}
-              className="bg-[#1a1a2e] border-white/20 text-gray-300 hover:bg-[#1f1f33] hover:text-white hover:border-white/30 h-12 px-6 rounded-xl"
+              className="h-12 px-6 rounded-xl w-full text-white font-semibold transition-all hover:opacity-90"
+              style={{ 
+                backgroundColor: '#FF7619',
+                boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.3)'
+              }}
             >
               Close
             </Button>
-          </DialogFooter>
-          <DialogPrimitive.Close className="absolute top-4 right-4 rounded-lg opacity-70 hover:opacity-100 transition-opacity text-gray-400 hover:text-white">
+          </div>
+          <button 
+            onClick={onClose}
+            className="absolute top-4 right-4 rounded-lg opacity-70 hover:opacity-100 transition-opacity text-gray-600 hover:text-gray-900"
+          >
             <X className="w-5 h-5" />
             <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
-        </DialogPortal>
-      </Dialog>
+          </button>
+        </div>
+        </>
+      )}
 
       {/* Notification Detail Modal */}
       <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>

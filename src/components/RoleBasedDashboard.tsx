@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { Users, Files, FolderOpen, Shield, AlertTriangle, Activity, TrendingUp, Plus, HardDrive, Upload, Clock } from "lucide-react";
+import { Users, Files, FolderOpen, Shield, AlertTriangle, Activity, TrendingUp, Plus, HardDrive, Upload, Clock, Settings, Database, Lock, UserCog } from "lucide-react";
 import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
@@ -40,7 +40,11 @@ const recentActivity = [
   { id: 4, action: "Updated security_policy.docx", time: "1 day ago", icon: Files, color: "text-purple-400" },
 ];
 
-function SuperAdminDashboard() {
+interface DashboardProps {
+  onNavigate?: (page: string) => void;
+}
+
+function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
   const [showCreateOrgModal, setShowCreateOrgModal] = useState(false);
   const [orgName, setOrgName] = useState('');
 
@@ -239,10 +243,34 @@ function SuperAdminDashboard() {
                 </div>
                 <div className="mb-8">
                   <div className="flex gap-2 mb-4">
-                    <div className="w-12 h-8 rounded bg-white/20 backdrop-blur-xl"></div>
-                    <div className="w-12 h-8 rounded bg-white/20 backdrop-blur-xl"></div>
-                    <div className="w-12 h-8 rounded bg-white/20 backdrop-blur-xl"></div>
-                    <div className="w-12 h-8 rounded bg-white/20 backdrop-blur-xl"></div>
+                    <button 
+                      onClick={() => onNavigate?.('users')}
+                      className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
+                      title="User Management"
+                    >
+                      <Users className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                    </button>
+                    <button 
+                      onClick={() => onNavigate?.('settings')}
+                      className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
+                      title="System Settings"
+                    >
+                      <Settings className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                    </button>
+                    <button 
+                      onClick={() => onNavigate?.('admin')}
+                      className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
+                      title="Admin Module"
+                    >
+                      <Database className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                    </button>
+                    <button 
+                      onClick={() => onNavigate?.('access')}
+                      className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
+                      title="Access Management"
+                    >
+                      <Lock className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                    </button>
                   </div>
                 </div>
                 <div className="flex items-end justify-between">
@@ -407,7 +435,7 @@ function SuperAdminDashboard() {
   );
 }
 
-function UserDashboard() {
+function UserDashboard({ onNavigate }: DashboardProps = {}) {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
@@ -592,7 +620,7 @@ function UserDashboard() {
   );
 }
 
-function AdminDashboard() {
+function AdminDashboard({ onNavigate }: DashboardProps = {}) {
   const { name } = useAuth();
   
   return (
@@ -762,16 +790,20 @@ function AdminDashboard() {
   );
 }
 
-export function RoleBasedDashboard() {
+interface RoleBasedDashboardProps {
+  onNavigate?: (page: string) => void;
+}
+
+export function RoleBasedDashboard({ onNavigate }: RoleBasedDashboardProps = {}) {
   const { role } = useAuth();
 
   if (role === 'super-admin') {
-    return <SuperAdminDashboard />;
+    return <SuperAdminDashboard onNavigate={onNavigate} />;
   }
   
   if (role === 'admin') {
-    return <AdminDashboard />;
+    return <AdminDashboard onNavigate={onNavigate} />;
   }
 
-  return <UserDashboard />;
+  return <UserDashboard onNavigate={onNavigate} />;
 }

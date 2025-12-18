@@ -28,7 +28,7 @@ export function Dashboard() {
       <div className="flex">
         <Sidebar activePage={activePage} onPageChange={setActivePage} />
         <main className="flex-1 p-6 pl-28">
-          {activePage === "dashboard" && <RoleBasedDashboard />}
+          {activePage === "dashboard" && <RoleBasedDashboard onNavigate={setActivePage} />}
           {activePage === "admin" && role === "super-admin" && <AdminModule onBack={() => setActivePage("dashboard")} />}
           {activePage === "users" && (role === "super-admin" || role === "admin") && <CompleteUserManagement />}
           {activePage === "organizations" && role === "super-admin" && <OrganizationsPage onBack={() => setActivePage("dashboard")} />}

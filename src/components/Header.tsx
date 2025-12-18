@@ -144,18 +144,16 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           <Button 
             size="icon" 
             variant="ghost" 
-            className="rounded-full hover:bg-white/10 text-gray-400 hover:text-white w-10 h-10"
-          >
-            <Settings className="w-5 h-5" />
-          </Button>
-          <Button 
-            size="icon" 
-            variant="ghost" 
             onClick={() => setShowNotifications(true)}
-            className="rounded-full hover:bg-white/10 text-gray-400 hover:text-white relative w-10 h-10"
+            className={`rounded-full relative w-10 h-10 transition-all ${
+              showNotifications 
+                ? 'text-white' 
+                : 'hover:bg-white/10 text-gray-400 hover:text-white'
+            }`}
+            style={showNotifications ? { backgroundColor: '#FF7619' } : undefined}
           >
             <Bell className="w-5 h-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ backgroundColor: '#FF7619' }}></span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full" style={{ backgroundColor: showNotifications ? '#fff' : '#FF7619' }}></span>
           </Button>
           
           {/* Profile Dropdown */}

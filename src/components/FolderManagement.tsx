@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Folder, FolderPlus, Edit2, Trash2, Users, Eye, FileText, Image, Video, Music, File, ArrowLeft } from 'lucide-react';
+import { Folder, FolderPlus, Edit2, Trash2, Users, Eye, FileText, Image, Video, Music, File, ArrowLeft, Upload, Mail } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
+import { Switch } from './ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -81,6 +82,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
   const [folderName, setFolderName] = useState('');
   const [folderDescription, setFolderDescription] = useState('');
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
+  const [emailNotifications, setEmailNotifications] = useState(true);
 
   const handleCreateFolder = () => {
     if (folderName.trim()) {
@@ -446,30 +448,19 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="folderDescription" className="text-gray-300 mb-2 block font-medium">
-                  Description <span className="text-gray-500 text-sm">(Optional)</span>
-                </Label>
-                <Textarea
-                  id="folderDescription"
-                  value={folderDescription}
-                  onChange={(e) => setFolderDescription(e.target.value)}
-                  placeholder="Enter folder description"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 rounded-xl focus:border-[#FF7619] min-h-[80px]"
-                />
-              </div>
-              
-              <div>
-                <Label className="text-gray-300 mb-3 block font-medium">Folder Type</Label>
-                <Select value={folderType} onValueChange={(value: 'internal' | 'external') => setFolderType(value)}>
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
-                    <SelectItem value="internal">Internal Folder</SelectItem>
-                    <SelectItem value="external">External Folder</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <p className="text-white font-medium mb-1">Email Notifications</p>
+                      <p className="text-sm text-gray-400">Get notified about folder activities</p>
+                    </div>
+                  </div>
+                  <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
+                </div>
               </div>
             </div>
             
@@ -798,36 +789,93 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
             </p>
           </div>
 
-          {/* Files Grid */}
+          {/* Files Grid - OneDrive Style */}
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-purple-500/10 rounded-3xl blur-xl"></div>
             <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
-              <h3 className="text-white text-lg font-semibold mb-4">Files & Media</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white text-lg font-semibold">Files & Media</h3>
+                <div className="flex gap-2">
+                  <Button
+                    className="h-10 px-4 rounded-xl text-white text-sm font-medium transition-all"
+                    style={{ 
+                      backgroundColor: '#FF7619',
+                      boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.3)'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 118, 25, 0.9)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#FF7619'}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload Folder
+                  </Button>
+                  <Button
+                    className="h-10 px-4 rounded-xl text-white text-sm font-medium transition-all"
+                    style={{ 
+                      backgroundColor: '#9A18FB',
+                      boxShadow: '0 4px 10px -2px rgba(154, 24, 251, 0.3)'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(154, 24, 251, 0.9)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#9A18FB'}
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload File
+                  </Button>
+                </div>
+              </div>
+              
+              {/* OneDrive List View Header */}
+              <div className="flex items-center gap-3 px-3 py-2 border-b border-white/10 mb-2">
+                <div className="w-8 flex-shrink-0"></div>
+                <div className="flex-1 min-w-0 flex items-center justify-between">
+                  <div className="flex-1 min-w-0 mr-4">
+                    <span className="text-xs font-medium text-gray-400 uppercase">Name</span>
+                  </div>
+                  <div className="flex items-center gap-6 text-xs font-medium text-gray-400 uppercase">
+                    <span className="w-20 text-right">Modified</span>
+                    <span className="w-16 text-right">Size</span>
+                    <span className="w-20 text-right">Type</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* OneDrive List View - Icon on Left, Details on Right */}
+              <div className="space-y-0.5">
                 {files.map((file) => (
                   <div
                     key={file.id}
                     onClick={() => openFileViewModal(file)}
-                    className="relative group bg-white/5 rounded-xl p-4 border border-white/10 hover:border-white/20 cursor-pointer transition-all"
+                    className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 cursor-pointer transition-all border border-transparent hover:border-white/10"
                   >
-                    <div className="flex items-start gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center flex-shrink-0">
-                        {getFileIcon(file.fileType)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-white font-medium text-sm mb-1 truncate">{file.name}</h4>
-                        <p className="text-xs text-gray-400">{file.size}</p>
-                      </div>
+                    {/* File Icon on Left */}
+                    <div className="w-8 h-8 rounded flex items-center justify-center bg-white/5 flex-shrink-0 group-hover:bg-white/10 transition-colors">
+                      {getFileIcon(file.fileType)}
                     </div>
-                    <div className="flex items-center justify-between text-xs text-gray-400">
-                      <span>{file.uploadedAt.toLocaleDateString()}</span>
-                      <Badge className="bg-white/10 text-gray-300 border-white/20 text-xs">
-                        {file.fileType}
-                      </Badge>
+                    
+                    {/* File Details on Right */}
+                    <div className="flex-1 min-w-0 flex items-center justify-between">
+                      <div className="flex-1 min-w-0 mr-4">
+                        <h4 className="text-white text-sm font-medium truncate group-hover:text-[#FF7619] transition-colors" title={file.name}>
+                          {file.name}
+                        </h4>
+                      </div>
+                      
+                      <div className="flex items-center gap-6 text-xs text-gray-400">
+                        <span className="w-20 text-right">{file.uploadedAt.toLocaleDateString()}</span>
+                        <span className="w-16 text-right font-medium">{file.size}</span>
+                        <span className="w-20 text-right capitalize">{file.fileType}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
+              
+              {files.length === 0 && (
+                <div className="text-center py-12">
+                  <Folder className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400 text-sm">No files in this folder yet</p>
+                  <p className="text-gray-500 text-xs mt-1">Upload files to get started</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

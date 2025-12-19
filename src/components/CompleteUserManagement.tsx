@@ -31,12 +31,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 interface User {
   id: string;
   name: string;
   email: string;
   role: 'Admin' | 'Moderator' | 'User';
+  category: 'Employee' | 'Contractor' | 'Partner' | 'Guest';
   status: 'Active' | 'Inactive';
   lastActive: string;
   avatar: string;
@@ -44,20 +52,23 @@ interface User {
 }
 
 const mockUsers: User[] = [
-  { id: '1', name: 'John Doe', email: 'john.doe@company.com', role: 'Admin', status: 'Active', lastActive: '2 mins ago', avatar: 'JD', type: 'internal' },
-  { id: '2', name: 'Sarah Anderson', email: 'sarah.a@company.com', role: 'User', status: 'Active', lastActive: '5 mins ago', avatar: 'SA', type: 'internal' },
-  { id: '3', name: 'Mike Johnson', email: 'mike.j@company.com', role: 'Moderator', status: 'Active', lastActive: '1 hour ago', avatar: 'MJ', type: 'internal' },
-  { id: '4', name: 'Emma Wilson', email: 'emma.w@company.com', role: 'User', status: 'Active', lastActive: '2 hours ago', avatar: 'EW', type: 'internal' },
-  { id: '5', name: 'Alex Chen', email: 'alex.c@company.com', role: 'User', status: 'Inactive', lastActive: '2 days ago', avatar: 'AC', type: 'external' },
-  { id: '6', name: 'Lisa Brown', email: 'lisa.b@company.com', role: 'Admin', status: 'Active', lastActive: '10 mins ago', avatar: 'LB', type: 'internal' },
-  { id: '7', name: 'Tom Harris', email: 'tom.h@company.com', role: 'Moderator', status: 'Active', lastActive: '30 mins ago', avatar: 'TH', type: 'external' },
-  { id: '8', name: 'Kate Miller', email: 'kate.m@company.com', role: 'User', status: 'Inactive', lastActive: '1 week ago', avatar: 'KM', type: 'external' },
+  { id: '1', name: 'John Doe', email: 'john.doe@company.com', role: 'Admin', category: 'Employee', status: 'Active', lastActive: '2 mins ago', avatar: 'JD', type: 'internal' },
+  { id: '2', name: 'Sarah Anderson', email: 'sarah.a@company.com', role: 'User', category: 'Employee', status: 'Active', lastActive: '5 mins ago', avatar: 'SA', type: 'internal' },
+  { id: '3', name: 'Mike Johnson', email: 'mike.j@company.com', role: 'Moderator', category: 'Employee', status: 'Active', lastActive: '1 hour ago', avatar: 'MJ', type: 'internal' },
+  { id: '4', name: 'Emma Wilson', email: 'emma.w@company.com', role: 'User', category: 'Contractor', status: 'Active', lastActive: '2 hours ago', avatar: 'EW', type: 'internal' },
+  { id: '5', name: 'Alex Chen', email: 'alex.c@company.com', role: 'User', category: 'Partner', status: 'Inactive', lastActive: '2 days ago', avatar: 'AC', type: 'external' },
+  { id: '6', name: 'Lisa Brown', email: 'lisa.b@company.com', role: 'Admin', category: 'Employee', status: 'Active', lastActive: '10 mins ago', avatar: 'LB', type: 'internal' },
+  { id: '7', name: 'Tom Harris', email: 'tom.h@company.com', role: 'Moderator', category: 'Contractor', status: 'Active', lastActive: '30 mins ago', avatar: 'TH', type: 'external' },
+  { id: '8', name: 'Kate Miller', email: 'kate.m@company.com', role: 'User', category: 'Guest', status: 'Inactive', lastActive: '1 week ago', avatar: 'KM', type: 'external' },
 ];
 
 export function CompleteUserManagement() {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [userType, setUserType] = useState<'internal' | 'external'>('internal');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -67,6 +78,7 @@ export function CompleteUserManagement() {
   const [detailsTarget, setDetailsTarget] = useState<User | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [category, setCategory] = useState<'Employee' | 'Contractor' | 'Partner' | 'Guest'>('Employee');
   const [errorName, setErrorName] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
 
@@ -93,6 +105,7 @@ export function CompleteUserManagement() {
       name,
       email,
       role: 'User',
+      category,
       status: 'Active',
       lastActive: 'Just now',
       type: userType,
@@ -112,28 +125,23 @@ export function CompleteUserManagement() {
 
   const handleEditUser = () => {
     setErrorName('');
-    setErrorEmail('');
 
     if (name.length < 2) {
       setErrorName('Name must be at least 2 characters');
       return;
     }
 
-    if (!validateEmail(email)) {
-      setErrorEmail('Please enter a valid email address');
-      return;
-    }
-
     if (editTarget) {
       setUsers(users.map(u => 
         u.id === editTarget.id 
-          ? { ...u, name, email, avatar: name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) }
+          ? { ...u, name, category, avatar: name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2) }
           : u
       ));
       setShowEditModal(false);
       setEditTarget(null);
       setName('');
       setEmail('');
+      setCategory('Employee');
     }
   };
 
@@ -149,6 +157,7 @@ export function CompleteUserManagement() {
     setEditTarget(user);
     setName(user.name);
     setEmail(user.email);
+    setCategory(user.category);
     setShowEditModal(true);
   };
 
@@ -163,11 +172,17 @@ export function CompleteUserManagement() {
   };
 
   const filteredUsers = users.filter(
-    (user) =>
-      user.type === userType &&
-      (user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.role.toLowerCase().includes(searchTerm.toLowerCase()))
+    (user) => {
+      const matchesType = user.type === userType;
+      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesRole = filterRole === 'all' || user.role === filterRole;
+      const matchesCategory = filterCategory === 'all' || user.category === filterCategory;
+      const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
+      
+      return matchesType && matchesSearch && matchesRole && matchesCategory && matchesStatus;
+    }
   );
 
   const totalUsers = users.length;
@@ -334,8 +349,8 @@ export function CompleteUserManagement() {
       </div>
 
       {/* Search Bar */}
-      <div className="flex gap-3">
-        <div className="relative" style={{ width: '40%' }}>
+      <div className="flex gap-3 flex-wrap">
+        <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <Input
             value={searchTerm}
@@ -344,10 +359,46 @@ export function CompleteUserManagement() {
             className="w-full pl-11 bg-[#1a1a2e]/60 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl"
           />
         </div>
-        <Button className="h-12 px-6 bg-[#1a1a2e]/60 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 rounded-xl">
-          <Filter className="w-5 h-5 mr-2" />
-          Filter by Role
-        </Button>
+        
+        {/* Filter Dropdowns */}
+        <Select value={filterRole} onValueChange={setFilterRole}>
+          <SelectTrigger className="w-[160px] h-12 bg-[#1a1a2e]/60 border-white/10 text-white rounded-xl">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Role" />
+          </SelectTrigger>
+          <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+            <SelectItem value="all">All Roles</SelectItem>
+            <SelectItem value="Admin">Admin</SelectItem>
+            <SelectItem value="Moderator">Moderator</SelectItem>
+            <SelectItem value="User">User</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={filterCategory} onValueChange={setFilterCategory}>
+          <SelectTrigger className="w-[160px] h-12 bg-[#1a1a2e]/60 border-white/10 text-white rounded-xl">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Category" />
+          </SelectTrigger>
+          <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+            <SelectItem value="all">All Categories</SelectItem>
+            <SelectItem value="Employee">Employee</SelectItem>
+            <SelectItem value="Contractor">Contractor</SelectItem>
+            <SelectItem value="Partner">Partner</SelectItem>
+            <SelectItem value="Guest">Guest</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <SelectTrigger className="w-[160px] h-12 bg-[#1a1a2e]/60 border-white/10 text-white rounded-xl">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+            <SelectItem value="all">All Status</SelectItem>
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Users Table */}
@@ -361,6 +412,7 @@ export function CompleteUserManagement() {
                   <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">User</th>
                   <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Email</th>
                   <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Role</th>
+                  <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Category</th>
                   <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Status</th>
                   <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Last Active</th>
                   <th className="text-left py-3 px-4 text-xs uppercase text-gray-400">Actions</th>
@@ -394,6 +446,9 @@ export function CompleteUserManagement() {
                     </td>
                     <td className="py-4 px-4">
                       <Badge className="border" style={getRoleBadgeStyle(user.role)}>{user.role}</Badge>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className="text-gray-300 text-sm">{user.category}</span>
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-2">
@@ -462,59 +517,7 @@ export function CompleteUserManagement() {
         </div>
       </div>
 
-      {/* Role Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Admins */}
-        <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--cyan)]/20 to-pink-500/20 rounded-2xl blur-xl"></div>
-          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-[var(--cyan)]/20">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--cyan)] to-pink-500 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white text-lg font-semibold">Admins</h3>
-                <p className="text-sm text-gray-400">Full access</p>
-              </div>
-            </div>
-            <p className="text-3xl text-white">{users.filter((u) => u.role === 'Admin').length}</p>
-          </div>
-        </div>
 
-        {/* Moderators */}
-        <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur-xl"></div>
-          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/20">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                <Shield className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white text-lg font-semibold">Moderators</h3>
-                <p className="text-sm text-gray-400">Limited access</p>
-              </div>
-            </div>
-            <p className="text-3xl text-white">{users.filter((u) => u.role === 'Moderator').length}</p>
-          </div>
-        </div>
-
-        {/* Users */}
-        <div className="relative group">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl blur-xl"></div>
-          <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-green-500/20">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-                <UsersIcon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white text-lg font-semibold">Users</h3>
-                <p className="text-sm text-gray-400">Basic access</p>
-              </div>
-            </div>
-            <p className="text-3xl text-white">{users.filter((u) => u.role === 'User').length}</p>
-          </div>
-        </div>
-      </div>
 
       {/* Add User Modal */}
       <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
@@ -556,6 +559,22 @@ export function CompleteUserManagement() {
                 }`}
               />
               {errorEmail && <p className="text-red-400 text-sm mt-1">{errorEmail}</p>}
+            </div>
+            <div>
+              <Label htmlFor="category" className="text-gray-300 mb-2 block">
+                Category
+              </Label>
+              <Select value={category} onValueChange={(value: any) => setCategory(value)}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+                  <SelectItem value="Employee">Employee</SelectItem>
+                  <SelectItem value="Contractor">Contractor</SelectItem>
+                  <SelectItem value="Partner">Partner</SelectItem>
+                  <SelectItem value="Guest">Guest</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
@@ -608,20 +627,20 @@ export function CompleteUserManagement() {
               {errorName && <p className="text-red-400 text-sm mt-1">{errorName}</p>}
             </div>
             <div>
-              <Label htmlFor="editEmail" className="text-gray-300 mb-2 block">
-                Email Address
+              <Label htmlFor="editCategory" className="text-gray-300 mb-2 block">
+                Category
               </Label>
-              <Input
-                id="editEmail"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="john.doe@company.com"
-                className={`bg-white/5 border-white/10 text-white placeholder:text-gray-500 ${
-                  errorEmail ? 'border-red-500' : ''
-                }`}
-              />
-              {errorEmail && <p className="text-red-400 text-sm mt-1">{errorEmail}</p>}
+              <Select value={category} onValueChange={(value: any) => setCategory(value)}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+                  <SelectItem value="Employee">Employee</SelectItem>
+                  <SelectItem value="Contractor">Contractor</SelectItem>
+                  <SelectItem value="Partner">Partner</SelectItem>
+                  <SelectItem value="Guest">Guest</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
@@ -632,6 +651,7 @@ export function CompleteUserManagement() {
                 setEditTarget(null);
                 setName('');
                 setEmail('');
+                setCategory('Employee');
                 setErrorName('');
                 setErrorEmail('');
               }}

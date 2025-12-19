@@ -81,7 +81,6 @@ interface EmailNotificationsProps {
 export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
   const [notifications, setNotifications] = useState<EmailNotification[]>(mockNotifications);
   const [selectedNotification, setSelectedNotification] = useState<EmailNotification | null>(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -141,7 +140,6 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
   const openNotificationDetail = (notification: EmailNotification) => {
     setSelectedNotification(notification);
     markAsRead(notification.id);
-    setShowDetailModal(true);
   };
 
   const copyLoginUrl = () => {
@@ -162,7 +160,7 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
       {open && (
         <>
           {/* Notification Panel */}
-          <div className="border border-gray-200 w-[500px] max-h-[600px] overflow-hidden flex flex-col shadow-2xl fixed z-[100] rounded-2xl p-6 animate-in fade-in slide-in-from-top-2 duration-200" style={{ backgroundColor: '#ffffff', opacity: 1, top: '56px', right: '100px' }}>
+          <div className="border border-gray-200 w-[420px] max-h-[400px] overflow-hidden flex flex-col shadow-2xl fixed z-[100] rounded-2xl p-5 animate-in fade-in slide-in-from-top-2 duration-200" style={{ backgroundColor: '#ffffff', opacity: 1, top: '56px', right: '100px' }}>
           <div className="mb-4">
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold text-gray-900 flex items-center gap-3">
@@ -212,174 +210,112 @@ export function EmailNotifications({ open, onClose }: EmailNotificationsProps) {
                 <p className="text-gray-400">No notifications yet</p>
               </div>
             ) : (
-              notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  onClick={() => openNotificationDetail(notification)}
-                  className={`cursor-pointer transition-all ${
-                    notification.read ? 'opacity-60' : ''
-                  }`}
-                >
-                  <div className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-all border border-gray-200">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getNotificationColor(notification.type)} flex items-center justify-center flex-shrink-0`}>
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <h4 className="text-gray-900 font-semibold">{notification.title}</h4>
-                          {!notification.read && (
-                            <div className="w-2 h-2 rounded-full bg-[#FF7619] flex-shrink-0 mt-1.5 animate-pulse"></div>
-                          )}
+              notifications.slice(0, 3).map((notification) => (
+                <div key={notification.id} className="space-y-3">
+                  <div
+                    onClick={() => openNotificationDetail(notification)}
+                    className={`cursor-pointer transition-all ${
+                      notification.read ? 'opacity-60' : ''
+                    } ${selectedNotification?.id === notification.id ? 'ring-2 ring-[#FF7619]' : ''}`}
+                  >
+                    <div className="bg-gray-50 rounded-2xl p-4 hover:bg-gray-100 transition-all border border-gray-200">
+                      <div className="flex items-start gap-4">
+                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getNotificationColor(notification.type)} flex items-center justify-center flex-shrink-0`}>
+                          {getNotificationIcon(notification.type)}
                         </div>
-                        <p className="text-gray-600 text-sm mb-3">{notification.message}</p>
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs text-gray-500">{formatTimestamp(notification.timestamp)}</p>
-                          <p className="text-xs text-gray-500">From: {notification.sender}</p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <h4 className="text-gray-900 font-semibold text-sm">{notification.title}</h4>
+                            {!notification.read && (
+                              <div className="w-2 h-2 rounded-full bg-[#FF7619] flex-shrink-0 mt-1.5 animate-pulse"></div>
+                            )}
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs text-gray-500">{formatTimestamp(notification.timestamp)}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+
+                  {/* Notification Details - Shown Directly Below This Notification */}
+                  {selectedNotification?.id === notification.id && (
+                    <div className="bg-gradient-to-br from-[#FF7619]/10 to-orange-600/10 rounded-2xl p-5 border-2 border-[#FF7619]/30 animate-in slide-in-from-top-2 duration-200 ml-4">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${getNotificationColor(notification.type)} flex items-center justify-center`}>
+                          {getNotificationIcon(notification.type)}
+                        </div>
+                        <h4 className="text-gray-900 font-bold text-lg">{notification.title}</h4>
+                      </div>
+
+                      <div className="bg-white rounded-xl p-4 mb-4 border border-gray-200">
+                        <p className="text-gray-900 mb-3">{notification.message}</p>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">From</span>
+                            <span className="text-gray-900 font-medium">{notification.sender}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Time</span>
+                            <span className="text-gray-900 font-medium">{formatTimestamp(notification.timestamp)}</span>
+                          </div>
+                          {notification.fileName && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-500">File/Folder</span>
+                              <span className="text-gray-900 font-medium">{notification.fileName}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Quick Actions */}
+                      <div className="space-y-2">
+                        <Button
+                          onClick={copyLoginUrl}
+                          variant="outline"
+                          size="sm"
+                          className="w-full bg-white border-gray-300 text-gray-700 hover:bg-gray-50 h-10 rounded-lg justify-start text-sm"
+                        >
+                          <LinkIcon className="w-4 h-4 mr-2" />
+                          Copy Login URL
+                        </Button>
+
+                        {notification.fileUrl && (
+                          <>
+                            <Button
+                              onClick={copyFileUrl}
+                              variant="outline"
+                              size="sm"
+                              className="w-full bg-white border-gray-300 text-gray-700 hover:bg-gray-50 h-10 rounded-lg justify-start text-sm"
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              Copy File URL
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              className="w-full h-10 rounded-lg text-white font-medium justify-start text-sm"
+                              style={{ 
+                                backgroundColor: '#FF7619',
+                                boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.3)'
+                              }}
+                            >
+                              <Eye className="w-4 h-4 mr-2" />
+                              View File/Folder
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))
             )}
           </div>
-
-          <div className="pt-4 border-t border-gray-200">
-            <Button
-              onClick={onClose}
-              className="h-12 px-6 rounded-xl w-full text-white font-semibold transition-all hover:opacity-90"
-              style={{ 
-                backgroundColor: '#FF7619',
-                boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.3)'
-              }}
-            >
-              Close
-            </Button>
-          </div>
-          <button 
-            onClick={onClose}
-            className="absolute top-4 right-4 rounded-lg opacity-70 hover:opacity-100 transition-opacity text-gray-600 hover:text-gray-900"
-          >
-            <X className="w-5 h-5" />
-            <span className="sr-only">Close</span>
-          </button>
         </div>
         </>
       )}
 
-      {/* Notification Detail Modal */}
-      <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
-        <DialogPortal>
-          <DialogOverlay className="bg-black/80 backdrop-blur-sm" />
-          <DialogPrimitive.Content className="bg-[#0f0f1a] border border-white/20 text-white max-w-md shadow-2xl fixed top-[50%] left-[50%] z-50 translate-x-[-50%] translate-y-[-50%] rounded-2xl p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                {selectedNotification && getNotificationIcon(selectedNotification.type)}
-              </div>
-              {selectedNotification?.title}
-            </DialogTitle>
-            <DialogDescription className="text-gray-400 mt-2">
-              Notification details and actions
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedNotification && (
-            <div className="py-4 space-y-4">
-              {/* Message */}
-              <div className="bg-[#1a1a2e] rounded-xl p-4 border border-white/10">
-                <p className="text-white mb-3">{selectedNotification.message}</p>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">From</span>
-                    <span className="text-white">{selectedNotification.sender}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Time</span>
-                    <span className="text-white">{formatTimestamp(selectedNotification.timestamp)}</span>
-                  </div>
-                  {selectedNotification.fileName && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">File/Folder</span>
-                      <span className="text-white">{selectedNotification.fileName}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="space-y-3">
-                <h4 className="text-white font-semibold text-sm">Quick Actions</h4>
-                
-                {/* Copy Login URL */}
-                <Button
-                  onClick={copyLoginUrl}
-                  variant="outline"
-                  className="w-full bg-[#1a1a2e] border-white/20 text-gray-300 hover:bg-[#1f1f33] hover:text-white hover:border-white/30 h-12 rounded-xl justify-start"
-                >
-                  <LinkIcon className="w-4 h-4 mr-2" />
-                  Copy Login URL
-                </Button>
-
-                {/* Copy File URL */}
-                {selectedNotification.fileUrl && (
-                  <Button
-                    onClick={copyFileUrl}
-                    variant="outline"
-                    className="w-full bg-[#1a1a2e] border-white/20 text-gray-300 hover:bg-[#1f1f33] hover:text-white hover:border-white/30 h-12 rounded-xl justify-start"
-                  >
-                    <FileText className="w-4 h-4 mr-2" />
-                    Copy File URL
-                  </Button>
-                )}
-
-                {/* View File */}
-                {selectedNotification.fileUrl && (
-                  <Button
-                    className="w-full h-12 rounded-xl shadow-lg text-white font-semibold justify-start"
-                    style={{ 
-                      backgroundColor: '#FF7619',
-                      boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
-                    }}
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    View File/Folder
-                  </Button>
-                )}
-              </div>
-
-              {/* Email Info */}
-              <div className="bg-[#1a1a2e] rounded-xl p-4 border border-blue-500/30">
-                <div className="flex gap-3">
-                  <Mail className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-white text-sm mb-1">Email Notification</p>
-                    <p className="text-gray-400 text-xs">
-                      This notification was also sent to your email address. Check your inbox for the full details.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDetailModal(false)}
-              className="bg-[#1a1a2e] border-white/20 text-gray-300 hover:bg-[#1f1f33] hover:text-white hover:border-white/30 h-12 px-6 rounded-xl"
-            >
-              Close
-            </Button>
-          </DialogFooter>
-          <DialogPrimitive.Close className="absolute top-4 right-4 rounded-lg opacity-70 hover:opacity-100 transition-opacity text-gray-400 hover:text-white">
-            <X className="w-5 h-5" />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
-        </DialogPrimitive.Content>
-        </DialogPortal>
-      </Dialog>
     </>
   );
 }

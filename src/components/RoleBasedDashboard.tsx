@@ -44,41 +44,72 @@ interface DashboardProps {
   onNavigate?: (page: string) => void;
 }
 
-function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
-  const [showCreateOrgModal, setShowCreateOrgModal] = useState(false);
-  const [orgName, setOrgName] = useState('');
+// Admin data structure
+interface AdminUser {
+  id: string;
+  initials: string;
+  name: string;
+  fullName: string;
+  role: string;
+  access: string;
+  activeUsers?: number;
+  organizations?: number;
+  lastLogin: string;
+  color: string;
+}
 
-  const handleCreateOrganization = () => {
-    if (orgName.trim()) {
-      // In production, this would call API to create organization
-      console.log('Creating organization:', orgName);
-      setShowCreateOrgModal(false);
-      setOrgName('');
-    }
-  };
+const adminUsers: AdminUser[] = [
+  {
+    id: 'sa',
+    initials: 'SA',
+    name: 'Sara',
+    fullName: 'Sara Anderson',
+    role: 'Super Admin',
+    access: 'Full Access',
+    activeUsers: 1247,
+    organizations: 12,
+    lastLogin: '2 hours ago',
+    color: 'from-blue-500 to-cyan-500'
+  },
+  {
+    id: 'jd',
+    initials: 'JD',
+    name: 'Jon',
+    fullName: 'Jon Davis',
+    role: 'System Admin',
+    access: 'Full Access',
+    activeUsers: 856,
+    organizations: 8,
+    lastLogin: '5 hours ago',
+    color: 'from-purple-500 to-pink-500'
+  },
+  {
+    id: 'mj',
+    initials: 'MJ',
+    name: 'Maria',
+    fullName: 'Maria Johnson',
+    role: 'Admin',
+    access: 'Limited Access',
+    activeUsers: 423,
+    organizations: 5,
+    lastLogin: '1 day ago',
+    color: 'from-green-500 to-emerald-500'
+  }
+];
+
+function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminUser>(adminUsers[0]);
+  const [selectedQuickAccess, setSelectedQuickAccess] = useState<string | null>(null);
 
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="space-y-1">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl text-white">
-              Good Morning <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Admin!</span>
-            </h1>
-            <p className="text-gray-400">Smart task tracking to keep your security workflow moving smoothly</p>
-          </div>
-          <Button
-            onClick={() => setShowCreateOrgModal(true)}
-            className="h-12 px-6 rounded-xl transition-all shadow-lg text-white font-semibold"
-            style={{ 
-              backgroundColor: '#FF7619',
-              boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
-            }}
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Create Organization
-          </Button>
+        <div>
+          <h1 className="text-3xl text-white">
+            Good Morning <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">Admin!</span>
+          </h1>
+          <p className="text-gray-400">Smart task tracking to keep your security workflow moving smoothly</p>
         </div>
       </div>
 
@@ -209,21 +240,27 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
             <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
               <h3 className="text-white mb-4">Quick Access</h3>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white cursor-pointer hover:scale-110 transition-transform">
-                  SA
-                </div>
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white cursor-pointer hover:scale-110 transition-transform">
-                  JD
-                </div>
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white cursor-pointer hover:scale-110 transition-transform">
-                  MJ
-                </div>
+                {adminUsers.map((admin) => (
+                  <div
+                    key={admin.id}
+                    onClick={() => setSelectedAdmin(admin)}
+                    className={`w-12 h-12 rounded-full bg-gradient-to-br ${admin.color} flex items-center justify-center text-white cursor-pointer hover:scale-110 transition-all ${
+                      selectedAdmin.id === admin.id ? 'ring-2 ring-white ring-offset-2 ring-offset-[#1a1a2e] scale-110' : ''
+                    }`}
+                    title={admin.fullName}
+                  >
+                    {admin.initials}
+                  </div>
+                ))}
                 <button className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all">
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
-              <div className="text-xs text-gray-500">
-                <p className="mb-1">Sara, Jon, Maria</p>
+              <div className="text-xs text-gray-400">
+                <p className="mb-1">{adminUsers.map(a => a.name).join(', ')}</p>
+                {selectedAdmin && (
+                  <p className="text-[#FF7619] font-medium mt-2">Selected: {selectedAdmin.fullName}</p>
+                )}
               </div>
             </div>
           </div>
@@ -235,14 +272,23 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
               <div className="relative">
-                <div className="flex items-center justify-between mb-8">
-                  <h4 className="text-white">Admin Access</h4>
-                  <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center">
-                    <Shield className="w-5 h-5 text-white" />
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${selectedAdmin.color} flex items-center justify-center text-white text-sm font-semibold shadow-lg`}>
+                      {selectedAdmin.initials}
+                    </div>
+                    <div>
+                      <h4 className="text-white text-sm font-semibold leading-tight">{selectedAdmin.fullName}</h4>
+                      <p className="text-white/70 text-xs">{selectedAdmin.role}</p>
+                    </div>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-white" />
                   </div>
                 </div>
-                <div className="mb-8">
-                  <div className="flex gap-2 mb-4">
+
+                <div className="mb-4">
+                  <div className="flex gap-2">
                     <button 
                       onClick={() => onNavigate?.('users')}
                       className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
@@ -273,14 +319,18 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                     </button>
                   </div>
                 </div>
+
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-white/80 text-xs mb-1">Admin User</p>
-                    <p className="text-white">ADMIN-2287</p>
+                    <p className="text-white/80 text-xs mb-1">{selectedAdmin.access}</p>
+                    <p className="text-white text-xs">Last: {selectedAdmin.lastLogin}</p>
                   </div>
-                  <div className="text-white text-xs">
-                    <span>Full Access</span>
-                  </div>
+                  {selectedAdmin.activeUsers && (
+                    <div className="text-right">
+                      <p className="text-white/80 text-xs">{selectedAdmin.activeUsers} users</p>
+                      <p className="text-white/80 text-xs">{selectedAdmin.organizations} orgs</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -367,70 +417,6 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
           </div>
         </div>
       </div>
-
-      {/* Create Organization Modal */}
-      <Dialog open={showCreateOrgModal} onOpenChange={setShowCreateOrgModal}>
-        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
-              <div 
-                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-                style={{ 
-                  backgroundColor: '#FF7619',
-                  boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
-                }}
-              >
-                <Plus className="w-5 h-5 text-white" />
-              </div>
-              Create New Organization
-            </DialogTitle>
-            <DialogDescription className="text-gray-400 mt-2">
-              Add a new organization to the system
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-5 py-4">
-            <div>
-              <Label htmlFor="dashboardOrgName" className="text-gray-300 mb-2 block font-medium">
-                Organization Name
-              </Label>
-              <Input
-                id="dashboardOrgName"
-                value={orgName}
-                onChange={(e) => setOrgName(e.target.value)}
-                placeholder="Enter organization name"
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
-                onKeyDown={(e) => e.key === 'Enter' && handleCreateOrganization()}
-              />
-            </div>
-          </div>
-          
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowCreateOrgModal(false);
-                setOrgName('');
-              }}
-              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleCreateOrganization}
-              disabled={!orgName.trim()}
-              className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold disabled:opacity-50"
-              style={{ 
-                backgroundColor: '#FF7619',
-                boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
-              }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Organization
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

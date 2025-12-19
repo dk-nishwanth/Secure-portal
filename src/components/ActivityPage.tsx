@@ -4,6 +4,13 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 interface Activity {
   id: string;
@@ -136,39 +143,33 @@ export function ActivityPage({ onBack }: ActivityPageProps) {
         ))}
       </div>
 
-      {/* Filters and Search */}
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl blur-xl opacity-50"></div>
-        <div className="relative bg-[#1a1a2e]/80 backdrop-blur-xl rounded-2xl p-4 border border-white/10">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Search activities..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-white/5 border-white/10 text-white h-11 rounded-xl"
-              />
-            </div>
-            <div className="flex gap-2 overflow-x-auto">
-              {['all', 'upload', 'download', 'share', 'edit', 'view', 'delete'].map((type) => (
-                <Button
-                  key={type}
-                  onClick={() => setFilterType(type)}
-                  variant="outline"
-                  className={`h-11 px-4 rounded-xl capitalize whitespace-nowrap ${
-                    filterType === type
-                      ? 'bg-[#FF7619] border-[#FF7619] text-white'
-                      : 'border-white/10 text-gray-400 hover:bg-white/10 hover:text-white'
-                  }`}
-                >
-                  <Filter className="w-4 h-4 mr-2" />
-                  {type}
-                </Button>
-              ))}
-            </div>
-          </div>
+      {/* Search and Filter Bar */}
+      <div className="flex gap-3 flex-wrap max-w-2xl">
+        <div className="relative flex-1 min-w-[250px]">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search activities..."
+            className="w-full pl-11 bg-[#1a1a2e]/60 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+          />
         </div>
+        
+        <Select value={filterType} onValueChange={setFilterType}>
+          <SelectTrigger className="w-[160px] h-12 bg-[#1a1a2e]/60 border-white/10 text-white rounded-xl">
+            <Filter className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="All Activities" />
+          </SelectTrigger>
+          <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+            <SelectItem value="all">All Activities</SelectItem>
+            <SelectItem value="upload">Upload</SelectItem>
+            <SelectItem value="download">Download</SelectItem>
+            <SelectItem value="share">Share</SelectItem>
+            <SelectItem value="edit">Edit</SelectItem>
+            <SelectItem value="view">View</SelectItem>
+            <SelectItem value="delete">Delete</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Activity List */}

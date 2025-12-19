@@ -68,6 +68,8 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [orgName, setOrgName] = useState('');
+  const [themeColor, setThemeColor] = useState('#FF7619');
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const [employees, setEmployees] = useState('');
   const [interns, setInterns] = useState('');
   const [managers, setManagers] = useState('');
@@ -75,6 +77,8 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
 
   const handleCreateOrg = () => {
     if (orgName.trim()) {
+      // In production, this would call API to create organization
+      console.log('Creating organization:', orgName, 'Theme:', themeColor, 'Logo:', logoFile?.name);
       const newOrg: Organization = {
         id: `org${Date.now()}`,
         name: orgName,
@@ -87,12 +91,17 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
       };
       setOrganizations([newOrg, ...organizations]);
       setOrgName('');
+      setThemeColor('#FF7619');
+      setLogoFile(null);
       setShowCreateModal(false);
     }
   };
 
   const handleEditOrg = () => {
     if (editTarget && orgName.trim()) {
+      // In production, this would call API to update organization with logo
+      console.log('Updating organization:', orgName, 'Logo:', logoFile?.name);
+      
       const employeesNum = parseInt(employees) || 0;
       const internsNum = parseInt(interns) || 0;
       const managersNum = parseInt(managers) || 0;
@@ -129,6 +138,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
       setEmployees('');
       setInterns('');
       setManagers('');
+      setLogoFile(null);
     }
   };
 
@@ -351,7 +361,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
                 Create New Organization
               </DialogTitle>
               <DialogDescription className="text-gray-400 mt-2">
-                Add a new organization
+                Add a new organization to the system
               </DialogDescription>
             </DialogHeader>
 
@@ -369,19 +379,65 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
                   onKeyDown={(e) => e.key === 'Enter' && handleCreateOrg()}
                 />
               </div>
+
+              <div>
+                <Label htmlFor="themeColor" className="text-gray-300 mb-2 block font-medium">
+                  Theme Color
+                </Label>
+                <div className="flex items-center gap-3">
+                  <input
+                    id="themeColor"
+                    type="color"
+                    value={themeColor}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                    className="w-16 h-12 rounded-xl cursor-pointer bg-white/5 border border-white/10"
+                    style={{ padding: '4px' }}
+                  />
+                  <Input
+                    value={themeColor}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                    placeholder="#FF7619"
+                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="logoUpload" className="text-gray-300 mb-2 block font-medium">
+                  Logo Upload <span className="text-gray-500 text-sm">(Optional)</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="logoUpload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setLogoFile(e.target.files?.[0] || null)}
+                    className="bg-white/5 border-white/10 text-white h-12 rounded-xl focus:border-[#FF7619] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#FF7619] file:text-white hover:file:bg-[#FF7619]/90 file:cursor-pointer"
+                  />
+                  {logoFile && (
+                    <p className="text-sm text-gray-400 mt-2">Selected: {logoFile.name}</p>
+                  )}
+                </div>
+              </div>
             </div>
             
             <DialogFooter className="gap-2">
               <Button
                 variant="outline"
-                onClick={() => setShowCreateModal(false)}
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setOrgName('');
+                  setThemeColor('#FF7619');
+                  setLogoFile(null);
+                }}
                 className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateOrg}
-                className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold"
+                disabled={!orgName.trim()}
+                className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold disabled:opacity-50"
                 style={{ 
                   backgroundColor: '#FF7619',
                   boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
@@ -471,6 +527,24 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
                 />
               </div>
 
+              <div>
+                <Label htmlFor="editLogoUpload" className="text-gray-300 mb-2 block font-medium">
+                  Logo Upload <span className="text-gray-500 text-sm">(Optional)</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="editLogoUpload"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setLogoFile(e.target.files?.[0] || null)}
+                    className="bg-white/5 border-white/10 text-white h-12 rounded-xl focus:border-[#FF7619] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#FF7619] file:text-white hover:file:bg-[#FF7619]/90 file:cursor-pointer"
+                  />
+                  {logoFile && (
+                    <p className="text-sm text-gray-400 mt-2">Selected: {logoFile.name}</p>
+                  )}
+                </div>
+              </div>
+
               <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Total Members</span>
@@ -491,6 +565,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
                   setEmployees('');
                   setInterns('');
                   setManagers('');
+                  setLogoFile(null);
                 }}
                 className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
               >

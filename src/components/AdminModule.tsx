@@ -10,7 +10,8 @@ import {
   Trash2,
   Eye,
   Activity,
-  Clock
+  Clock,
+  Search
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -25,6 +26,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 type AdminView = 'dashboard' | 'users' | 'admins';
 
@@ -48,6 +56,7 @@ export function AdminModule({ onBack }: AdminModuleProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
   const [adminName, setAdminName] = useState('');
@@ -58,6 +67,12 @@ export function AdminModule({ onBack }: AdminModuleProps) {
     { id: '2', name: 'System Admin', email: 'sysadmin@company.com', role: 'System Admin', status: 'Active' },
     { id: '3', name: 'Admin User', email: 'admin@company.com', role: 'Admin', status: 'Active' },
   ]);
+
+  // Filter admins based on search term
+  const filteredAdmins = admins.filter(admin =>
+    admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    admin.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleCreateAdmin = () => {
     if (adminName.trim() && adminEmail.trim()) {
@@ -264,7 +279,18 @@ export function AdminModule({ onBack }: AdminModuleProps) {
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-purple-500/10 rounded-3xl blur-xl"></div>
             <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
-              <h3 className="text-white text-lg font-semibold mb-4">List of Admins</h3>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-white text-lg font-semibold">List of Admins</h3>
+                <div className="relative w-80">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <Input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search admins by name or email"
+                    className="w-full pl-11 bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-11 rounded-xl"
+                  />
+                </div>
+              </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
@@ -276,7 +302,7 @@ export function AdminModule({ onBack }: AdminModuleProps) {
                     </tr>
                   </thead>
                   <tbody>
-                    {admins.map((admin) => (
+                    {filteredAdmins.map((admin) => (
                       <tr key={admin.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                         <td className="py-4 px-4">
                           <div className="flex items-center gap-3">
@@ -387,13 +413,17 @@ export function AdminModule({ onBack }: AdminModuleProps) {
               <Label htmlFor="adminRole" className="text-gray-300 mb-2 block font-medium">
                 Role
               </Label>
-              <Input
-                id="adminRole"
-                value={adminRole}
-                onChange={(e) => setAdminRole(e.target.value)}
-                placeholder="Admin"
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
-              />
+              <Select value={adminRole} onValueChange={setAdminRole}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+                  <SelectItem value="Super Admin">Super Admin</SelectItem>
+                  <SelectItem value="System Admin">System Admin</SelectItem>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                  <SelectItem value="Moderator">Moderator</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
@@ -465,12 +495,17 @@ export function AdminModule({ onBack }: AdminModuleProps) {
               <Label htmlFor="editAdminRole" className="text-gray-300 mb-2 block font-medium">
                 Role
               </Label>
-              <Input
-                id="editAdminRole"
-                value={adminRole}
-                onChange={(e) => setAdminRole(e.target.value)}
-                className="bg-white/5 border-white/10 text-white h-12 rounded-xl focus:border-[#FF7619]"
-              />
+              <Select value={adminRole} onValueChange={setAdminRole}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+                  <SelectItem value="Super Admin">Super Admin</SelectItem>
+                  <SelectItem value="System Admin">System Admin</SelectItem>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                  <SelectItem value="Moderator">Moderator</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           

@@ -144,7 +144,7 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           <Button 
             size="icon" 
             variant="ghost" 
-            onClick={() => setShowNotifications(true)}
+            onClick={() => setShowNotifications(!showNotifications)}
             className={`rounded-full relative w-10 h-10 transition-all ${
               showNotifications 
                 ? 'text-white' 

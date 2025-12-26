@@ -11,15 +11,10 @@ function AppContent() {
   const [pendingRole, setPendingRole] = useState<'super-admin' | 'admin' | 'user' | null>(null);
 
   const handleLoginSuccess = (email: string, userRole: 'super-admin' | 'admin' | 'user') => {
-    if (userRole === 'user') {
-      // Regular users need 2FA
-      setUserEmail(email);
-      setPendingRole(userRole);
-      setShowTwoFactor(true);
-    } else {
-      // Super admin and admin bypass 2FA for now (can be changed)
-      // Role is already set in Login component
-    }
+    // All users (super-admin, admin, and user) require 2FA
+    setUserEmail(email);
+    setPendingRole(userRole);
+    setShowTwoFactor(true);
   };
 
   const handleTwoFactorVerify = () => {

@@ -14,6 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const securityData = [
   { month: "Sep", blocked: 45, allowed: 120 },
@@ -98,8 +105,56 @@ const adminUsers: AdminUser[] = [
 ];
 
 function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
+  const [admins, setAdmins] = useState<AdminUser[]>(adminUsers);
   const [selectedAdmin, setSelectedAdmin] = useState<AdminUser>(adminUsers[0]);
   const [selectedQuickAccess, setSelectedQuickAccess] = useState<string | null>(null);
+  const [showAddAdminModal, setShowAddAdminModal] = useState(false);
+  const [newAdminName, setNewAdminName] = useState('');
+  const [newAdminRole, setNewAdminRole] = useState('Admin');
+  const [newAdminAccess, setNewAdminAccess] = useState('Limited Access');
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const getRandomColor = () => {
+    const colors = [
+      'from-blue-500 to-cyan-500',
+      'from-purple-500 to-pink-500',
+      'from-green-500 to-emerald-500',
+      'from-orange-500 to-red-500',
+      'from-indigo-500 to-purple-500',
+      'from-pink-500 to-rose-500'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+  };
+
+  const handleAddAdmin = () => {
+    if (newAdminName.trim()) {
+      const newAdmin: AdminUser = {
+        id: `admin${Date.now()}`,
+        initials: getInitials(newAdminName),
+        name: newAdminName.split(' ')[0],
+        fullName: newAdminName,
+        role: newAdminRole,
+        access: newAdminAccess,
+        activeUsers: 0,
+        organizations: 0,
+        lastLogin: 'Just now',
+        color: getRandomColor()
+      };
+      setAdmins([...admins, newAdmin]);
+      setNewAdminName('');
+      setNewAdminRole('Admin');
+      setNewAdminAccess('Limited Access');
+      setShowAddAdminModal(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -240,7 +295,7 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
             <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10">
               <h3 className="text-white mb-4">Quick Access</h3>
               <div className="flex items-center gap-2 mb-4">
-                {adminUsers.map((admin) => (
+                {admins.map((admin) => (
                   <div
                     key={admin.id}
                     onClick={() => setSelectedAdmin(admin)}
@@ -252,12 +307,16 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                     {admin.initials}
                   </div>
                 ))}
-                <button className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all">
+                <button 
+                  onClick={() => setShowAddAdminModal(true)}
+                  className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                  title="Add new admin"
+                >
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
               <div className="text-xs text-gray-400">
-                <p className="mb-1">{adminUsers.map(a => a.name).join(', ')}</p>
+                <p className="mb-1">{admins.map(a => a.name).join(', ')}</p>
                 {selectedAdmin && (
                   <p className="text-[#FF7619] font-medium mt-2">Selected: {selectedAdmin.fullName}</p>
                 )}
@@ -273,14 +332,9 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
               <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
               <div className="relative">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${selectedAdmin.color} flex items-center justify-center text-white text-sm font-semibold shadow-lg`}>
-                      {selectedAdmin.initials}
-                    </div>
-                    <div>
-                      <h4 className="text-white text-sm font-semibold leading-tight">{selectedAdmin.fullName}</h4>
-                      <p className="text-white/70 text-xs">{selectedAdmin.role}</p>
-                    </div>
+                  <div>
+                    <h4 className="text-white text-sm font-semibold leading-tight">{selectedAdmin.fullName}</h4>
+                    <p className="text-white/70 text-xs">{selectedAdmin.role}</p>
                   </div>
                   <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center">
                     <Shield className="w-4 h-4 text-white" />
@@ -417,6 +471,105 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
           </div>
         </div>
       </div>
+
+      {/* Add Admin Modal */}
+      <Dialog open={showAddAdminModal} onOpenChange={setShowAddAdminModal}>
+        <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
+                style={{ 
+                  backgroundColor: '#FF7619',
+                  boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+                }}
+              >
+                <Plus className="w-5 h-5 text-white" />
+              </div>
+              Add New Admin
+            </DialogTitle>
+            <DialogDescription className="text-gray-400 mt-2">
+              Add a new admin user to Quick Access
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            <div>
+              <Label htmlFor="adminFullName" className="text-gray-300 mb-2 block font-medium">
+                Full Name
+              </Label>
+              <Input
+                id="adminFullName"
+                value={newAdminName}
+                onChange={(e) => setNewAdminName(e.target.value)}
+                placeholder="Enter full name"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 h-12 rounded-xl focus:border-[#FF7619]"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddAdmin()}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="adminRole" className="text-gray-300 mb-2 block font-medium">
+                Role
+              </Label>
+              <Select value={newAdminRole} onValueChange={setNewAdminRole}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+                  <SelectItem value="Super Admin">Super Admin</SelectItem>
+                  <SelectItem value="System Admin">System Admin</SelectItem>
+                  <SelectItem value="Admin">Admin</SelectItem>
+                  <SelectItem value="Moderator">Moderator</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="adminAccess" className="text-gray-300 mb-2 block font-medium">
+                Access Level
+              </Label>
+              <Select value={newAdminAccess} onValueChange={setNewAdminAccess}>
+                <SelectTrigger className="bg-white/5 border-white/10 text-white h-12 rounded-xl">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1a2e] border-white/10 text-white">
+                  <SelectItem value="Full Access">Full Access</SelectItem>
+                  <SelectItem value="Limited Access">Limited Access</SelectItem>
+                  <SelectItem value="View Only">View Only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowAddAdminModal(false);
+                setNewAdminName('');
+                setNewAdminRole('Admin');
+                setNewAdminAccess('Limited Access');
+              }}
+              className="border-white/10 text-gray-400 hover:bg-white/10 hover:text-white h-12 px-6 rounded-xl"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddAdmin}
+              disabled={!newAdminName.trim()}
+              className="h-12 px-6 rounded-xl shadow-lg text-white font-semibold disabled:opacity-50"
+              style={{ 
+                backgroundColor: '#FF7619',
+                boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+              }}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Admin
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

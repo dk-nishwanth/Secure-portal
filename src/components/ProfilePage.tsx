@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { User, Building2, Shield, Bell, Lock, Eye, EyeOff, Save, ArrowLeft, Mail, Phone, MapPin, Briefcase, Calendar, Award, Settings } from 'lucide-react';
+import { Building2, Shield, Lock, Eye, EyeOff, Save, ArrowLeft, Briefcase, Calendar, Award, Settings } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { useAuth } from '../contexts/AuthContext';
-import { Switch } from './ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 
 interface ProfilePageProps {
   onBack?: () => void;
@@ -25,12 +23,6 @@ export function ProfilePage({ onBack }: ProfilePageProps) {
   const [department, setDepartment] = useState('Engineering');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  
-  // Notification settings
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [securityAlerts, setSecurityAlerts] = useState(true);
-  const [fileSharing, setFileSharing] = useState(true);
-  const [weeklyReports, setWeeklyReports] = useState(false);
 
   const getInitials = (fullName: string) => {
     return fullName
@@ -151,120 +143,8 @@ export function ProfilePage({ onBack }: ProfilePageProps) {
         </div>
       </div>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="personal" className="space-y-6">
-        <TabsList className="bg-[#1a1a2e]/80 border border-white/10 p-1.5 rounded-xl">
-          <TabsTrigger value="personal" className="rounded-lg px-4 py-2.5 data-[state=active]:bg-[#FF7619] data-[state=active]:text-white">
-            <User className="w-4 h-4 mr-2" />
-            Personal Info
-          </TabsTrigger>
-          <TabsTrigger value="security" className="rounded-lg px-4 py-2.5 data-[state=active]:bg-[#FF7619] data-[state=active]:text-white">
-            <Lock className="w-4 h-4 mr-2" />
-            Security
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="rounded-lg px-4 py-2.5 data-[state=active]:bg-[#FF7619] data-[state=active]:text-white">
-            <Bell className="w-4 h-4 mr-2" />
-            Notifications
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Personal Information Tab */}
-        <TabsContent value="personal" className="space-y-6 mt-0">
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl blur-xl opacity-50"></div>
-            <div className="relative bg-[#1a1a2e]/80 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
-              <h3 className="text-lg font-semibold text-white mb-8">Personal Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-                <div className="space-y-4">
-                  <Label className="text-gray-300 flex items-center gap-2 text-sm font-medium">
-                    <User className="w-4 h-4 text-[#FF7619]" />
-                    Full Name
-                  </Label>
-                  <Input
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    disabled={!isEditing}
-                    className="bg-white/5 border-white/10 text-white rounded-xl disabled:opacity-50 !px-4 !py-4 !h-auto"
-                    style={{ minHeight: '56px' }}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label className="text-gray-300 flex items-center gap-2 text-sm font-medium">
-                    <Mail className="w-4 h-4 text-[#FF7619]" />
-                    Email Address
-                  </Label>
-                  <Input
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={!isEditing}
-                    className="bg-white/5 border-white/10 text-white rounded-xl disabled:opacity-50 !px-4 !py-4 !h-auto"
-                    style={{ minHeight: '56px' }}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label className="text-gray-300 flex items-center gap-2 text-sm font-medium">
-                    <Phone className="w-4 h-4 text-[#FF7619]" />
-                    Phone Number
-                  </Label>
-                  <Input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    disabled={!isEditing}
-                    className="bg-white/5 border-white/10 text-white rounded-xl disabled:opacity-50 !px-4 !py-4 !h-auto"
-                    style={{ minHeight: '56px' }}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label className="text-gray-300 flex items-center gap-2 text-sm font-medium">
-                    <MapPin className="w-4 h-4 text-[#FF7619]" />
-                    Location
-                  </Label>
-                  <Input
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    disabled={!isEditing}
-                    className="bg-white/5 border-white/10 text-white rounded-xl disabled:opacity-50 !px-4 !py-4 !h-auto"
-                    style={{ minHeight: '56px' }}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label className="text-gray-300 flex items-center gap-2 text-sm font-medium">
-                    <Briefcase className="w-4 h-4 text-[#FF7619]" />
-                    Department
-                  </Label>
-                  <Input
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    disabled={!isEditing}
-                    className="bg-white/5 border-white/10 text-white rounded-xl disabled:opacity-50 !px-4 !py-4 !h-auto"
-                    style={{ minHeight: '56px' }}
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  <Label className="text-gray-300 flex items-center gap-2 text-sm font-medium">
-                    <Award className="w-4 h-4 text-[#FF7619]" />
-                    Role
-                  </Label>
-                  <Input
-                    value={role === 'super-admin' ? 'Super Administrator' : 'User'}
-                    disabled
-                    className="bg-white/5 border-white/10 text-white rounded-xl opacity-50 !px-4 !py-4 !h-auto"
-                    style={{ minHeight: '56px' }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Security Tab */}
-        <TabsContent value="security" className="space-y-6 mt-0">
+      {/* Security Section */}
+      <div className="space-y-6">
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl blur-xl opacity-50"></div>
             <div className="relative bg-[#1a1a2e]/80 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
@@ -333,72 +213,7 @@ export function ProfilePage({ onBack }: ProfilePageProps) {
               </div>
             </div>
           </div>
-        </TabsContent>
-
-        {/* Notifications Tab */}
-        <TabsContent value="notifications" className="space-y-6 mt-0">
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl blur-xl opacity-50"></div>
-            <div className="relative bg-[#1a1a2e]/80 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
-              <h3 className="text-lg font-semibold text-white mb-8">Notification Preferences</h3>
-              
-              <div className="space-y-5">
-                <div className="flex items-center justify-between p-6 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-white font-medium mb-1">Email Notifications</p>
-                      <p className="text-sm text-gray-400">Receive email updates about your account</p>
-                    </div>
-                  </div>
-                  <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} className="ml-4" />
-                </div>
-
-                <div className="flex items-center justify-between p-6 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center flex-shrink-0">
-                      <Shield className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-white font-medium mb-1">Security Alerts</p>
-                      <p className="text-sm text-gray-400">Get notified about security events</p>
-                    </div>
-                  </div>
-                  <Switch checked={securityAlerts} onCheckedChange={setSecurityAlerts} className="ml-4" />
-                </div>
-
-                <div className="flex items-center justify-between p-6 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-                      <Bell className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-white font-medium mb-1">File Sharing Notifications</p>
-                      <p className="text-sm text-gray-400">Alerts when files are shared with you</p>
-                    </div>
-                  </div>
-                  <Switch checked={fileSharing} onCheckedChange={setFileSharing} className="ml-4" />
-                </div>
-
-                <div className="flex items-center justify-between p-6 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
-                  <div className="flex items-center gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center flex-shrink-0">
-                      <Calendar className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-white font-medium mb-1">Weekly Reports</p>
-                      <p className="text-sm text-gray-400">Receive weekly activity summaries</p>
-                    </div>
-                  </div>
-                  <Switch checked={weeklyReports} onCheckedChange={setWeeklyReports} className="ml-4" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-      </Tabs>
+        </div>
     </div>
   );
 }

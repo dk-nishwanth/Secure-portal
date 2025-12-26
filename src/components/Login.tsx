@@ -77,16 +77,10 @@ export function Login({ onLoginSuccess }: LoginProps) {
                       'user@company.com';
     setName(name);
     
-    if (role === 'user' && onLoginSuccess) {
-      // For regular users, trigger 2FA flow
+    // All users (super-admin, admin, and user) require 2FA
+    if (onLoginSuccess) {
       onLoginSuccess(demoEmail, role);
-      // Don't set role yet, wait for 2FA
-    } else {
-      // Super admin and admin bypass 2FA
-      setRole(role);
-      if (onLoginSuccess) {
-        onLoginSuccess(demoEmail, role);
-      }
+      // Don't set role yet, wait for 2FA verification
     }
   };
 

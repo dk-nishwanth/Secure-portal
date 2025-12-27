@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Folder, FolderPlus, Edit2, Trash2, Users, Eye, FileText, Image, Video, Music, File, ArrowLeft, Upload, Mail } from 'lucide-react';
+import { Folder, FolderPlus, Edit2, Trash2, Users, Eye, FileText, Image, Video, Music, File, ArrowLeft, Upload, Mail, ChevronRight, Home } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -175,8 +175,21 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
 
   const internalFolders = folders.filter(f => f.type === 'internal');
   const externalFolders = folders.filter(f => f.type === 'external');
+  const displayFolders = folderType === 'internal' ? internalFolders : externalFolders;
 
-  // List View
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).replace(/\//g, '-') + ' ' + date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  // List View - Windows Explorer Style
   if (view === 'list') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
@@ -209,205 +222,133 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
           </div>
 
           {/* Folder Type Tabs */}
-          <div className="relative group mb-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-purple-500/10 rounded-2xl blur-xl"></div>
-            <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-4 border border-white/10">
-              <div className="flex gap-2">
-                <Button
-                  onClick={() => setFolderType('internal')}
-                  variant="ghost"
-                  className={`h-11 px-5 rounded-xl font-medium transition-all ${
-                    folderType === 'internal' 
-                      ? 'bg-gradient-to-r from-[#FF7619] to-[#9A18FB] text-white shadow-lg' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  Internal Folders
-                </Button>
-                <Button
-                  onClick={() => setFolderType('external')}
-                  variant="ghost"
-                  className={`h-11 px-5 rounded-xl font-medium transition-all ${
-                    folderType === 'external' 
-                      ? 'bg-gradient-to-r from-[#FF7619] to-[#9A18FB] text-white shadow-lg' 
-                      : 'text-gray-400 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  External Folders
-                </Button>
-              </div>
-            </div>
+          <div className="flex gap-2 mb-6">
+            <button
+              onClick={() => setFolderType('internal')}
+              style={{
+                backgroundColor: folderType === 'internal' ? '#FF7619' : 'transparent',
+                color: folderType === 'internal' ? 'white' : '#9CA3AF'
+              }}
+              className="h-12 px-6 rounded-full font-medium transition-all duration-200 hover:text-white hover:bg-white/10 active:scale-95"
+            >
+              Internal Folders
+            </button>
+            <button
+              onClick={() => setFolderType('external')}
+              style={{
+                backgroundColor: folderType === 'external' ? '#FF7619' : 'transparent',
+                color: folderType === 'external' ? 'white' : '#9CA3AF'
+              }}
+              className="h-12 px-6 rounded-full font-medium transition-all duration-200 hover:text-white hover:bg-white/10 active:scale-95"
+            >
+              External Folders
+            </button>
           </div>
 
-          {/* Folders Grid */}
-          <div className="space-y-8">
-            {folderType === 'internal' && internalFolders.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <h3 className="text-xl font-semibold text-white">
-                    Internal Folders
-                  </h3>
-                  <Badge 
-                    className="border"
-                    style={{ 
-                      backgroundColor: 'rgba(255, 118, 25, 0.2)', 
-                      color: '#FF7619',
-                      borderColor: 'rgba(255, 118, 25, 0.3)'
-                    }}
-                  >
-                    {internalFolders.length}
-                  </Badge>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {internalFolders.map((folder, index) => {
-                    const isOrange = index % 2 === 0;
-                    const iconColor = isOrange ? '#FF7619' : '#9A18FB';
-                    const bgGradient = isOrange 
-                      ? 'from-orange-500/20 to-orange-600/20' 
-                      : 'from-purple-500/20 to-purple-600/20';
-                    
-                    return (
-                      <div
-                        key={folder.id}
-                        className="relative group bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-5 border border-white/10 hover:border-white/20 cursor-pointer transition-all"
-                      >
-                        <div className="flex items-start justify-between mb-4">
-                          <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${bgGradient} flex items-center justify-center shadow-lg`}>
-                            <Folder className="w-6 h-6" style={{ color: iconColor }} />
-                          </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleViewFolder(folder)}
-                              className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openEditModal(folder)}
-                              className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openAccessModal(folder)}
-                              className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
-                            >
-                              <Users className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => openDeleteModal(folder)}
-                              className="w-8 h-8 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <h4 
-                          className="text-white font-semibold mb-1 truncate cursor-pointer hover:text-[#FF7619] transition-colors"
-                          onClick={() => handleViewFiles(folder)}
-                        >
-                          {folder.name}
-                        </h4>
-                        {folder.description && (
-                          <p className="text-xs text-gray-400 mb-3 line-clamp-2">{folder.description}</p>
-                        )}
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-400">{folder.fileCount} files</span>
-                          <span className="text-white font-medium">{folder.size}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
+          {/* Windows Explorer Style Folder List */}
+          <div className="bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
+            {/* Header Row */}
+            <div className="flex items-center px-6 py-4 border-b border-white/10 bg-white/5">
+              {/* Folder Icon Space */}
+              <div className="w-8 flex-shrink-0"></div>
+              
+              {/* Folder Name */}
+              <div className="flex-1 min-w-0 pr-6">
+                <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">Name</span>
+              </div>
+
+              {/* Actions */}
+              <div className="w-44 px-3">
+                <div className="flex items-center justify-center">
+                  <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">Actions</span>
                 </div>
               </div>
-            )}
+            </div>
 
-            {folderType === 'external' && externalFolders.length > 0 && (
-              <div>
-                <div className="flex items-center gap-3 mb-4">
-                  <h3 className="text-xl font-semibold text-white">
-                    External Folders
-                  </h3>
-                  <Badge 
-                    className="border"
-                    style={{ 
-                      backgroundColor: 'rgba(59, 130, 246, 0.2)', 
-                      color: '#3b82f6',
-                      borderColor: 'rgba(59, 130, 246, 0.3)'
-                    }}
+            {/* Folder Rows */}
+            <div className="divide-y divide-white/5">
+              {displayFolders.map((folder) => (
+                <div
+                  key={folder.id}
+                  className="group flex items-center px-6 py-4 hover:bg-white/5 cursor-pointer transition-all duration-200"
+                >
+                  {/* Folder Icon */}
+                  <div className="w-8 flex-shrink-0">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 6C2 4.89543 2.89543 4 4 4H9L11 6H20C21.1046 6 22 6.89543 22 8V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V6Z" fill="#FCD34D"/>
+                      <path d="M2 8H22V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V8Z" fill="#FBBF24"/>
+                    </svg>
+                  </div>
+                  
+                  {/* Folder Name */}
+                  <div 
+                    className="flex-1 min-w-0 pr-6"
+                    onClick={() => handleViewFiles(folder)}
                   >
-                    {externalFolders.length}
-                  </Badge>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {externalFolders.map((folder) => (
-                    <div
-                      key={folder.id}
-                      className="relative group bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-5 border border-white/10 hover:border-blue-500/40 cursor-pointer transition-all"
+                    <span className="text-white text-sm font-medium truncate group-hover:text-[#FF7619] transition-colors duration-200">
+                      {folder.name}
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="w-44 px-3 flex items-center justify-center gap-3">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewFolder(folder);
+                      }}
+                      className="w-9 h-9 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-200"
+                      title="View Details"
                     >
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center shadow-lg">
-                          <Folder className="w-6 h-6 text-blue-500" />
-                        </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleViewFolder(folder)}
-                            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openEditModal(folder)}
-                            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openAccessModal(folder)}
-                            className="w-8 h-8 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white"
-                          >
-                            <Users className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => openDeleteModal(folder)}
-                            className="w-8 h-8 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <h4 
-                        className="text-white font-semibold mb-1 truncate cursor-pointer hover:text-blue-400 transition-colors"
-                        onClick={() => handleViewFiles(folder)}
-                      >
-                        {folder.name}
-                      </h4>
-                      {folder.description && (
-                        <p className="text-xs text-gray-400 mb-3 line-clamp-2">{folder.description}</p>
-                      )}
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400">{folder.fileCount} files</span>
-                        <span className="text-white font-medium">{folder.size}</span>
-                      </div>
-                    </div>
-                  ))}
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openEditModal(folder);
+                      }}
+                      className="w-9 h-9 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-200"
+                      title="Edit"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openAccessModal(folder);
+                      }}
+                      className="w-9 h-9 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-200"
+                      title="Manage Access"
+                    >
+                      <Users className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openDeleteModal(folder);
+                      }}
+                      className="w-9 h-9 rounded-lg hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-all duration-200"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {displayFolders.length === 0 && (
+              <div className="text-center py-16">
+                <Folder className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-400 text-sm">No folders found</p>
               </div>
             )}
           </div>
@@ -657,18 +598,34 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
         <div className="px-6 py-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 mb-4 text-sm">
+            <button
               onClick={() => {
                 setView('list');
                 setSelectedFolder(null);
               }}
-              variant="ghost"
-              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-xl h-10 px-4"
+              className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Back to Folders
-            </Button>
+            </button>
+          </div>
+
+          {/* Breadcrumb Path */}
+          <div className="flex items-center gap-2 mb-6 text-sm">
+            <button
+              onClick={() => {
+                setView('list');
+                setSelectedFolder(null);
+              }}
+              className="flex items-center gap-1 text-gray-400 hover:text-[#FF7619] transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              <span>Folders</span>
+            </button>
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+            <span className="text-white font-medium">{selectedFolder.name}</span>
           </div>
 
           <div className="relative group mb-6">
@@ -766,18 +723,34 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
         <div className="px-6 py-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 mb-4 text-sm">
+            <button
               onClick={() => {
                 setView('list');
                 setSelectedFolder(null);
               }}
-              variant="ghost"
-              className="text-gray-400 hover:text-white hover:bg-white/10 rounded-xl h-10 px-4"
+              className="flex items-center gap-1 text-gray-400 hover:text-white transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Back to Folders
-            </Button>
+            </button>
+          </div>
+
+          {/* Breadcrumb Path */}
+          <div className="flex items-center gap-2 mb-6 text-sm">
+            <button
+              onClick={() => {
+                setView('list');
+                setSelectedFolder(null);
+              }}
+              className="flex items-center gap-1 text-gray-400 hover:text-[#FF7619] transition-colors"
+            >
+              <Home className="w-4 h-4" />
+              <span>Folders</span>
+            </button>
+            <ChevronRight className="w-4 h-4 text-gray-600" />
+            <span className="text-white font-medium">{selectedFolder.name}</span>
           </div>
 
           <div className="mb-6">

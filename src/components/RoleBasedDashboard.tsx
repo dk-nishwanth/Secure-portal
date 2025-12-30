@@ -186,7 +186,6 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                 <p className="text-4xl text-white mb-2">1,247</p>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-400">Compare to last month</span>
-                  <span className="text-green-400 text-sm">+12%</span>
                 </div>
               </div>
             </div>
@@ -227,61 +226,47 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
             </div>
             <div className="grid grid-cols-2 gap-4 flex-1 content-start">
               {/* Total Files */}
-              <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Files className="w-3 h-3 text-white" />
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <Files className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm text-gray-400">Files</span>
+                  <span className="text-base text-gray-400 font-medium">Files</span>
                 </div>
-                <p className="text-2xl text-white mb-2">8,942</p>
-                <div className="flex items-center gap-1 text-green-400 text-xs">
-                  <TrendingUp className="w-3 h-3" />
-                  <span>+6%</span>
-                </div>
+                <p className="text-3xl text-white font-bold">8,942</p>
               </div>
 
               {/* Total Folders */}
-              <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
-                    <FolderOpen className="w-3 h-3 text-white" />
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <FolderOpen className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm text-gray-400">Folders</span>
+                  <span className="text-base text-gray-400 font-medium">Folders</span>
                 </div>
-                <p className="text-2xl text-white mb-2">342</p>
-                <div className="flex items-center gap-1 text-green-400 text-xs">
-                  <TrendingUp className="w-3 h-3" />
-                  <span>+2%</span>
-                </div>
+                <p className="text-3xl text-white font-bold">342</p>
               </div>
 
               {/* Threats */}
-              <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Shield className="w-3 h-3 text-white" />
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm text-gray-400">Blocked</span>
+                  <span className="text-base text-gray-400 font-medium">Blocked</span>
                 </div>
-                <p className="text-2xl text-white mb-2">127</p>
-                <div className="flex items-center gap-1 text-green-400 text-xs">
-                  <span>-23%</span>
-                </div>
+                <p className="text-3xl text-white font-bold">127</p>
               </div>
 
               {/* Active Sessions */}
-              <div className="bg-white/5 rounded-2xl p-4 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Activity className="w-3 h-3 text-white" />
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/5 hover:border-white/10 transition-all cursor-pointer">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                    <Activity className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-sm text-gray-400">Sessions</span>
+                  <span className="text-base text-gray-400 font-medium">Sessions</span>
                 </div>
-                <p className="text-2xl text-white mb-2">342</p>
-                <div className="flex items-center gap-1 text-red-400 text-xs">
-                  <span>+15%</span>
-                </div>
+                <p className="text-3xl text-white font-bold">342</p>
               </div>
             </div>
           </div>
@@ -595,10 +580,6 @@ function UserDashboard({ onNavigate }: DashboardProps = {}) {
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
                 <Files className="w-6 h-6 text-white" />
               </div>
-              <div className="flex items-center gap-1 text-green-400 text-sm">
-                <TrendingUp className="w-4 h-4" />
-                <span>+8%</span>
-              </div>
             </div>
             <div>
               <p className="text-gray-400 text-sm mb-1">Total Files</p>
@@ -615,10 +596,6 @@ function UserDashboard({ onNavigate }: DashboardProps = {}) {
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30">
                 <FolderOpen className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex items-center gap-1 text-green-400 text-sm">
-                <TrendingUp className="w-4 h-4" />
-                <span>+3%</span>
               </div>
             </div>
             <div>
@@ -788,7 +765,6 @@ function AdminDashboard({ onNavigate }: DashboardProps = {}) {
               <p className="text-4xl text-white mb-2">847</p>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-400">Compare to last month</span>
-                <span className="text-green-400 text-sm">+8%</span>
               </div>
             </div>
           </div>
@@ -808,7 +784,6 @@ function AdminDashboard({ onNavigate }: DashboardProps = {}) {
               <p className="text-4xl text-white mb-2">256</p>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-400">Internal & External</span>
-                <span className="text-green-400 text-sm">+5%</span>
               </div>
             </div>
           </div>

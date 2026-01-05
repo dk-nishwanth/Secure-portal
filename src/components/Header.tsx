@@ -157,7 +157,7 @@ export function Header({ activePage = "dashboard", onPageChange, onNavigateToOrg
           </Button>
           
           {/* Profile Dropdown */}
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 hover:bg-white/10 rounded-full pr-3 transition-all">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: '#FF7619', boxShadow: '0 4px 10px -2px rgba(255, 118, 25, 0.2)' }}>

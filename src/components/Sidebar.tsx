@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Shield, Folder, Building2, UserCog } from "lucide-react";
+import { LayoutDashboard, Users, Shield, Folder, Building2, UserCog, Activity, Share2 } from "lucide-react";
 import { ActivePage } from "./Dashboard";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -18,6 +18,7 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
     { id: "organizations" as ActivePage, icon: Building2, tooltip: "Organizations" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
+    { id: "health" as ActivePage, icon: Activity, tooltip: "Website Health Check" },
   ];
 
   const adminMenuItems = [
@@ -25,12 +26,14 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
     { id: "users" as ActivePage, icon: Users, tooltip: "User Management" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
+    { id: "health" as ActivePage, icon: Activity, tooltip: "Website Health Check" },
   ];
 
   const userMenuItems = [
     { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Dashboard" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
+    { id: "health" as ActivePage, icon: Activity, tooltip: "Website Health Check" },
   ];
 
   const menuItems = role === 'super-admin' ? superAdminMenuItems : 

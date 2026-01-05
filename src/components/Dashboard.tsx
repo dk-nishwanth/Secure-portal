@@ -10,9 +10,11 @@ import { AccessManagement } from "./AccessManagement";
 import { ActivityPage } from "./ActivityPage";
 import { ProfilePage } from "./ProfilePage";
 import { SettingsPage } from "./SettingsPage";
+import HealthCheckPage from "./HealthCheckPage";
+import { FileShareDemo } from "./FileShareDemo";
 import { useAuth } from "../contexts/AuthContext";
 
-export type ActivePage = "dashboard" | "admin" | "users" | "organizations" | "folders" | "access" | "files" | "shared" | "activity" | "profile" | "settings";
+export type ActivePage = "dashboard" | "admin" | "users" | "organizations" | "folders" | "access" | "files" | "shared" | "activity" | "profile" | "settings" | "health" | "fileshare";
 
 export function Dashboard() {
   const [activePage, setActivePage] = useState<ActivePage>("dashboard");
@@ -39,6 +41,8 @@ export function Dashboard() {
           {activePage === "activity" && <ActivityPage onBack={() => setActivePage("dashboard")} />}
           {activePage === "profile" && <ProfilePage onBack={() => setActivePage("dashboard")} />}
           {activePage === "settings" && <SettingsPage onBack={() => setActivePage("dashboard")} />}
+          {activePage === "health" && <HealthCheckPage />}
+          {activePage === "fileshare" && <FileShareDemo />}
         </main>
       </div>
     </div>

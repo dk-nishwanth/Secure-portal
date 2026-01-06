@@ -1,326 +1,252 @@
-import React, { useState, useEffect } from 'react';
-import { Activity, Server, Wifi, Database, Shield, RefreshCw, AlertTriangle, CheckCircle, XCircle, Monitor, HardDrive, Cpu, MemoryStick, Mail } from 'lucide-react';
-
-interface ServiceStatus {
-  name: string;
-  status: 'online' | 'offline' | 'warning';
-  responseTime: number;
-  lastChecked: string;
-}
-
-interface SystemInfo {
-  uptime: string;
-  memory: { used: number; total: number };
-  cpu: number;
-  storage: { used: number; total: number };
-}
+import React, { useState } from 'react';
+import { Activity, Server, Wifi, Database, Shield, RefreshCw, AlertTriangle, CheckCircle, XCircle, Monitor, HardDrive, Cpu, MemoryStick, Mail, Zap, Globe, Lock, TrendingUp, Clock, Users, FileText, Play, Eye, RotateCcw, Settings, Download } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const HealthCheckPage: React.FC = () => {
-  const [generalStatus, setGeneralStatus] = useState<'healthy' | 'warning' | 'critical'>('healthy');
-  const [systemInfo, setSystemInfo] = useState<SystemInfo>({
-    uptime: '7 days, 14 hours',
-    memory: { used: 4.2, total: 8 },
-    cpu: 23,
-    storage: { used: 45, total: 100 }
-  });
-  
-  const [services, setServices] = useState<ServiceStatus[]>([
-    { name: 'Authentication Service', status: 'online', responseTime: 120, lastChecked: '2 minutes ago' },
-    { name: 'Database', status: 'online', responseTime: 45, lastChecked: '1 minute ago' },
-    { name: 'File Storage', status: 'warning', responseTime: 340, lastChecked: '3 minutes ago' },
-    { name: 'Email Service', status: 'online', responseTime: 89, lastChecked: '1 minute ago' },
-    { name: 'Backup Service', status: 'online', responseTime: 156, lastChecked: '5 minutes ago' }
-  ]);
-
+  const { currentOrgName } = useAuth();
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Simplified system info
+  const systemInfo = {
+    status: 'healthy',
+    lastUpdated: '2024-05-21T10:30:42Z',
+    uptime: '15 days, 4 hours',
+    environment: 'Production',
+    version: 'v2.4.1',
+    responseTime: '120 ms',
+    platform: 'Linux (Ubuntu 22.04)',
+    nodeVersion: 'v20.12.2',
+    memoryUsage: { used: 10.4, total: 16, percentage: 65 },
+    cpuCores: 8,
+    cpuModel: 'AMD EPYC 7763',
+    loadAverage: '1.25, 1.40, 1.35'
+  };
+
+  // Simplified services
+  const services = [
+    { name: 'Database', status: 'operational', responseTime: '15 ms', details: 'Connected, no issues' },
+    { name: 'GridFS', status: 'operational', responseTime: '25 ms', details: 'Storage available' },
+    { name: 'Websocket', status: 'operational', responseTime: '10 ms', details: 'Active connections: 250' },
+    { name: 'Render', status: 'operational', responseTime: '80 ms', details: 'Rendering pipeline active' }
+  ];
+
+  // Quick actions
+  const quickActions = [
+    { name: 'Run Full Health Check', icon: Play, action: () => console.log('Running health check...') },
+    { name: 'View Logs', icon: Eye, action: () => console.log('Opening logs...') },
+    { name: 'Restart Services', icon: RotateCcw, action: () => console.log('Restarting services...') },
+    { name: 'Configure Alerts', icon: Settings, action: () => console.log('Opening alert config...') },
+    { name: 'Export Report', icon: Download, action: () => console.log('Exporting report...') }
+  ];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'online':
-        return <CheckCircle className="w-6 h-6 text-green-400" />;
-      case 'warning':
-        return <AlertTriangle className="w-6 h-6 text-yellow-400" />;
-      case 'offline':
-        return <XCircle className="w-6 h-6 text-red-400" />;
-      default:
-        return <AlertTriangle className="w-6 h-6 text-gray-400" />;
-    }
-  };
-
-  const getServiceIcon = (serviceName: string) => {
-    if (serviceName.includes('Authentication')) return <Shield className="w-5 h-5 text-blue-400" />;
-    if (serviceName.includes('Database')) return <Database className="w-5 h-5 text-green-400" />;
-    if (serviceName.includes('File Storage')) return <HardDrive className="w-5 h-5 text-purple-400" />;
-    if (serviceName.includes('Email')) return <Mail className="w-5 h-5 text-orange-400" />;
-    if (serviceName.includes('Backup')) return <Server className="w-5 h-5 text-cyan-400" />;
-    return <Server className="w-5 h-5 text-gray-400" />;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'online':
+      case 'operational':
       case 'healthy':
-        return 'text-green-400 bg-green-500/10 border-green-500/30';
+        return <CheckCircle className="w-4 h-4 text-green-400" />;
       case 'warning':
-        return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30';
+        return <AlertTriangle className="w-4 h-4 text-yellow-400" />;
       case 'offline':
       case 'critical':
-        return 'text-red-400 bg-red-500/10 border-red-500/30';
+        return <XCircle className="w-4 h-4 text-red-400" />;
       default:
-        return 'text-gray-400 bg-gray-500/10 border-gray-500/30';
+        return <AlertTriangle className="w-4 h-4 text-gray-400" />;
     }
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
     setLastRefresh(new Date());
-    // Simulate refresh - in real app, this would fetch fresh data
-    console.log('Refreshing health check data...');
-  };
-
-  const handleRestartService = (serviceName: string) => {
-    console.log(`Restarting ${serviceName}...`);
-    // Simulate service restart
-  };
-
-  const handleRunDiagnostics = () => {
-    console.log('Running system diagnostics...');
+    
+    // Simulate API call
+    setTimeout(() => {
+      setIsRefreshing(false);
+      console.log('Health check data refreshed');
+    }, 2000);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header Section */}
-      <div className="space-y-1">
-        <h1 className="text-3xl text-white">
-          Website <span className="bg-gradient-to-r from-blue-400 to-cyan-600 bg-clip-text text-transparent">Health Check</span>
-        </h1>
-        <p className="text-gray-400">Monitor system performance and service status in real-time</p>
-      </div>
-
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-gray-400">
-          Last updated: {lastRefresh.toLocaleTimeString()}
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0f] via-[#0f0f1a] to-[#0a0a0f]">
+      <div className="px-6 py-4">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Website Health Check</h1>
+            <p className="text-gray-400 text-sm">Monitoring system status and services</p>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="h-10 px-4 rounded-xl transition-all shadow-lg text-white font-semibold flex items-center gap-2 text-sm"
+            style={{ 
+              backgroundColor: '#FF7619',
+              boxShadow: '0 10px 15px -3px rgba(255, 118, 25, 0.3)'
+            }}
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          </button>
         </div>
-        <button
-          onClick={handleRefresh}
-          className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-lg hover:shadow-blue-500/25 font-medium"
-        >
-          <RefreshCw className="w-4 h-4" />
-          <span>Refresh</span>
-        </button>
-      </div>
 
-      {/* General Status */}
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-3xl blur-xl"></div>
-        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-green-500/30">
-                <Shield className="w-6 h-6 text-white" />
+        {/* Main Content - Three Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-140px)]">
+          {/* Left Column - General Status */}
+          <div className="relative group h-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-white/10 h-full flex flex-col">
+              <h2 className="text-lg font-bold text-white mb-6">General Status</h2>
+              
+              {/* Status Icon */}
+              <div className="flex flex-col items-center mb-6">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center mb-3">
+                  <CheckCircle className="w-8 h-8 text-green-400" />
+                </div>
+                <h3 className="text-lg font-bold text-white mb-2">System is Healthy</h3>
               </div>
-              <h2 className="text-xl font-semibold text-white">General Status</h2>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <div className={`inline-flex items-center space-x-3 px-6 py-3 rounded-xl border ${getStatusColor(generalStatus)} font-medium text-base`}>
-              {getStatusIcon(generalStatus)}
-              <span className="capitalize">{generalStatus}</span>
-            </div>
-            <p className="text-gray-300 leading-relaxed text-base">
-              All critical systems are operational. Minor performance issues detected in file storage.
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* System Information */}
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 rounded-3xl blur-xl"></div>
-        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <Monitor className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-xl font-semibold text-white">System Information</h2>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 p-6 rounded-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-sm text-gray-400 font-medium">Uptime</div>
-                <Server className="w-5 h-5 text-blue-400" />
-              </div>
-              <div className="text-2xl font-bold text-white">{systemInfo.uptime}</div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 p-6 rounded-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-sm text-gray-400 font-medium">Memory Usage</div>
-                <MemoryStick className="w-5 h-5 text-green-400" />
-              </div>
-              <div className="text-2xl font-bold text-white mb-3">
-                {systemInfo.memory.used}GB / {systemInfo.memory.total}GB
-              </div>
-              <div className="w-full bg-gray-700/50 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-300" 
-                  style={{ width: `${(systemInfo.memory.used / systemInfo.memory.total) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 p-6 rounded-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-sm text-gray-400 font-medium">CPU Usage</div>
-                <Cpu className="w-5 h-5 text-orange-400" />
-              </div>
-              <div className="text-2xl font-bold text-white mb-3">{systemInfo.cpu}%</div>
-              <div className="w-full bg-gray-700/50 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-orange-500 to-red-500 h-3 rounded-full transition-all duration-300" 
-                  style={{ width: `${systemInfo.cpu}%` }}
-                ></div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 p-6 rounded-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-sm text-gray-400 font-medium">Storage</div>
-                <HardDrive className="w-5 h-5 text-purple-400" />
-              </div>
-              <div className="text-2xl font-bold text-white mb-3">
-                {systemInfo.storage.used}GB / {systemInfo.storage.total}GB
-              </div>
-              <div className="w-full bg-gray-700/50 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-300" 
-                  style={{ width: `${(systemInfo.storage.used / systemInfo.storage.total) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              {/* System Details */}
+              <div className="space-y-3 text-sm flex-1">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Last Updated:</span>
+                  <span className="text-white text-xs">{systemInfo.lastUpdated}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Uptime:</span>
+                  <span className="text-white">{systemInfo.uptime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Environment:</span>
+                  <span className="text-white">{systemInfo.environment}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Version:</span>
+                  <span className="text-white">{systemInfo.version}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Overall Response Time:</span>
+                  <span className="text-white">{systemInfo.responseTime}</span>
+                </div>
 
-      {/* Service Status */}
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-3xl blur-xl"></div>
-        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
-                <Database className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-xl font-semibold text-white">Service Status</h2>
-            </div>
-          </div>
-          
-          <div className="space-y-5">
-            {services.map((service, index) => (
-              <div key={index} className="flex items-center justify-between p-6 bg-gradient-to-r from-gray-800/40 to-gray-700/30 border border-white/10 rounded-2xl hover:border-white/20 transition-all duration-200">
-                <div className="flex items-center space-x-6">
-                  <div className="flex-shrink-0 p-3 bg-gray-600/50 rounded-xl border border-gray-500/30">
-                    {getServiceIcon(service.name)}
+                {/* System Information */}
+                <div className="mt-6">
+                  <h4 className="text-white font-semibold mb-3 text-sm">System Information</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Platform:</span>
+                      <span className="text-white text-xs">{systemInfo.platform}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Node.js Version:</span>
+                      <span className="text-white">{systemInfo.nodeVersion}</span>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center space-x-4 mb-3">
-                      <div className="font-semibold text-white text-lg">{service.name}</div>
-                      <div className="flex-shrink-0">
-                        {getStatusIcon(service.status)}
+                </div>
+
+                {/* Memory Usage */}
+                <div className="mt-6">
+                  <h4 className="text-white font-semibold mb-3 text-sm">Memory Usage (Total: 16 GB)</h4>
+                  <div className="w-full bg-gray-700/50 rounded-full h-2 mb-2">
+                    <div 
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500" 
+                      style={{ width: `${systemInfo.memoryUsage.percentage}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-400">{systemInfo.memoryUsage.percentage}%</span>
+                    <span className="text-white">{systemInfo.memoryUsage.used} GB used of {systemInfo.memoryUsage.total} GB total</span>
+                  </div>
+                </div>
+
+                {/* CPU Details */}
+                <div className="mt-6">
+                  <h4 className="text-white font-semibold mb-3 text-sm">CPU Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Cores:</span>
+                      <span className="text-white">{systemInfo.cpuCores} Cores</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Model:</span>
+                      <span className="text-white text-xs">{systemInfo.cpuModel}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Load Average:</span>
+                      <span className="text-white">{systemInfo.loadAverage}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Middle Column - Services Status */}
+          <div className="relative group h-full">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl blur-xl"></div>
+            <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-white/10 h-full flex flex-col">
+              <h2 className="text-lg font-bold text-white mb-6">Services Status</h2>
+              
+              <div className="grid grid-cols-1 gap-4 flex-1">
+                {services.map((service, index) => (
+                  <div key={index} className="bg-gradient-to-r from-gray-800/40 to-gray-700/30 border border-white/10 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <Database className="w-5 h-5 text-blue-400" />
+                        <span className="text-white font-semibold">{service.name}</span>
                       </div>
+                      {getStatusIcon(service.status)}
                     </div>
-                    <div className="text-sm text-gray-400">
-                      <span>Response time: </span>
-                      <span className="font-medium text-gray-300">{service.responseTime}ms</span>
-                      <span className="mx-4">•</span>
-                      <span>Last checked: </span>
-                      <span className="font-medium text-gray-300">{service.lastChecked}</span>
+                    <div className="text-sm space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Status:</span>
+                        <span className="text-green-400 capitalize">{service.status}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Response Time:</span>
+                        <span className="text-white">{service.responseTime}</span>
+                      </div>
+                      <div className="text-gray-400 text-xs mt-2">{service.details}</div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center space-x-5 flex-shrink-0">
-                  <span className={`px-5 py-2 text-sm font-semibold rounded-full ${getStatusColor(service.status)}`}>
-                    {service.status.toUpperCase()}
-                  </span>
-                  {service.status !== 'online' && (
-                    <button
-                      onClick={() => handleRestartService(service.name)}
-                      className="text-blue-400 hover:text-blue-300 text-sm font-medium px-5 py-2 rounded-lg hover:bg-blue-500/10 transition-all duration-200 border border-blue-500/20"
-                    >
-                      Restart
-                    </button>
-                  )}
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-3xl blur-xl"></div>
-        <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-3xl p-6 border border-white/10 shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <Wifi className="w-6 h-6 text-white" />
-              </div>
-              <h2 className="text-xl font-semibold text-white">Quick Actions</h2>
             </div>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <button
-              onClick={handleRunDiagnostics}
-              className="flex items-center space-x-4 p-6 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-2xl hover:from-blue-500/20 hover:to-cyan-500/20 hover:border-blue-400/30 transition-all duration-200 text-white group"
-            >
-              <Activity className="w-6 h-6 text-blue-400 group-hover:text-blue-300 flex-shrink-0" />
-              <span className="font-semibold text-base">Run Diagnostics</span>
-            </button>
-            
-            <button
-              onClick={handleRefresh}
-              className="flex items-center space-x-4 p-6 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl hover:from-green-500/20 hover:to-emerald-500/20 hover:border-green-400/30 transition-all duration-200 text-white group"
-            >
-              <RefreshCw className="w-6 h-6 text-green-400 group-hover:text-green-300 flex-shrink-0" />
-              <span className="font-semibold text-base">Refresh All Services</span>
-            </button>
-            
-            <button
-              onClick={() => console.log('Clearing cache...')}
-              className="flex items-center space-x-4 p-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl hover:from-purple-500/20 hover:to-pink-500/20 hover:border-purple-400/30 transition-all duration-200 text-white group"
-            >
-              <Database className="w-6 h-6 text-purple-400 group-hover:text-purple-300 flex-shrink-0" />
-              <span className="font-semibold text-base">Clear Cache</span>
-            </button>
-            
-            <button
-              onClick={() => console.log('Viewing logs...')}
-              className="flex items-center space-x-4 p-6 bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl hover:from-orange-500/20 hover:to-red-500/20 hover:border-orange-400/30 transition-all duration-200 text-white group"
-            >
-              <Server className="w-6 h-6 text-orange-400 group-hover:text-orange-300 flex-shrink-0" />
-              <span className="font-semibold text-base">View System Logs</span>
-            </button>
-            
-            <button
-              onClick={() => console.log('Running backup...')}
-              className="flex items-center space-x-4 p-6 bg-gradient-to-br from-indigo-500/10 to-blue-500/10 border border-indigo-500/20 rounded-2xl hover:from-indigo-500/20 hover:to-blue-500/20 hover:border-indigo-400/30 transition-all duration-200 text-white group"
-            >
-              <Shield className="w-6 h-6 text-indigo-400 group-hover:text-indigo-300 flex-shrink-0" />
-              <span className="font-semibold text-base">Run Backup</span>
-            </button>
-            
-            <button
-              onClick={() => console.log('Testing connectivity...')}
-              className="flex items-center space-x-4 p-6 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border border-teal-500/20 rounded-2xl hover:from-teal-500/20 hover:to-cyan-500/20 hover:border-teal-400/30 transition-all duration-200 text-white group"
-            >
-              <Wifi className="w-6 h-6 text-teal-400 group-hover:text-teal-300 flex-shrink-0" />
-              <span className="font-semibold text-base">Test Connectivity</span>
-            </button>
+
+          {/* Right Column - Recent Alerts & Quick Actions */}
+          <div className="space-y-6 h-full flex flex-col">
+            {/* Recent Alerts */}
+            <div className="relative group flex-1">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-white/10 h-full flex flex-col">
+                <h2 className="text-lg font-bold text-white mb-6">Recent Alerts</h2>
+                <div className="text-center py-8 flex-1 flex flex-col justify-center">
+                  <AlertTriangle className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+                  <p className="text-gray-400 text-sm">No recent critical alerts.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="relative group flex-1">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-2xl blur-xl"></div>
+              <div className="relative bg-[#1a1a2e]/60 backdrop-blur-xl rounded-2xl p-6 border border-white/10 h-full flex flex-col">
+                <h2 className="text-lg font-bold text-white mb-6">Quick Actions</h2>
+                
+                <div className="space-y-3 flex-1">
+                  {quickActions.map((action, index) => (
+                    <button
+                      key={index}
+                      onClick={action.action}
+                      className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-gray-800/40 to-gray-700/30 border border-white/10 rounded-xl hover:border-white/20 transition-all duration-200 text-white group"
+                    >
+                      <action.icon className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                      <span className="font-medium text-sm">{action.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

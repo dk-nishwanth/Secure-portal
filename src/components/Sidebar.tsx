@@ -18,7 +18,6 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
     { id: "organizations" as ActivePage, icon: Building2, tooltip: "Organizations" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
-    { id: "health" as ActivePage, icon: Activity, tooltip: "Website Health Check" },
   ];
 
   const adminMenuItems = [
@@ -26,14 +25,12 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
     { id: "users" as ActivePage, icon: Users, tooltip: "User Management" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
-    { id: "health" as ActivePage, icon: Activity, tooltip: "Website Health Check" },
   ];
 
   const userMenuItems = [
     { id: "dashboard" as ActivePage, icon: LayoutDashboard, tooltip: "Dashboard" },
     { id: "folders" as ActivePage, icon: Folder, tooltip: "Folder Management" },
     { id: "access" as ActivePage, icon: Shield, tooltip: "Access Management" },
-    { id: "health" as ActivePage, icon: Activity, tooltip: "Website Health Check" },
   ];
 
   const menuItems = role === 'super-admin' ? superAdminMenuItems : 
@@ -76,14 +73,36 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
         })}
       </div>
 
-      {/* Security Score Indicator */}
+      {/* Health Check / Security Score Indicator */}
       <div className="mt-auto">
-        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 flex items-center justify-center relative group">
-          <Shield className="w-5 h-5 text-green-400" />
-          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[#1a1a2e]"></div>
+        <div className="relative group">
+          <button
+            onClick={() => onPageChange('health')}
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all relative ${
+              activePage === 'health'
+                ? "text-black"
+                : "text-green-400 hover:text-white hover:bg-white/10"
+            }`}
+            style={
+              activePage === 'health'
+                ? {
+                    backgroundColor: '#FF7619',
+                    boxShadow: '0 0 20px rgba(255, 118, 25, 0.4), 0 0 40px rgba(255, 118, 25, 0.2)',
+                  }
+                : {
+                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2))',
+                    border: '1px solid rgba(34, 197, 94, 0.3)'
+                  }
+            }
+          >
+            <Shield className="w-5 h-5" />
+            {activePage !== 'health' && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-[#1a1a2e]"></div>
+            )}
+          </button>
           {/* Tooltip */}
           <div className="absolute left-16 top-1/2 -translate-y-1/2 ml-2 px-3 py-2 bg-[#1a1a2e] rounded-lg text-white text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity border border-white/10 shadow-xl">
-            <p className="text-xs text-gray-400 mb-1">Security Score</p>
+            <p className="text-xs text-gray-400 mb-1">System Health</p>
             <p className="text-green-400">87% - Protected</p>
           </div>
         </div>

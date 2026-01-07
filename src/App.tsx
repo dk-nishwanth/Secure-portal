@@ -3,12 +3,16 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Login } from "./components/Login";
 import { TwoFactorAuth } from "./components/TwoFactorAuth";
 import { Dashboard } from "./components/Dashboard";
+import { useResponsiveInit } from "./hooks/useResponsiveInit";
 
 function AppContent() {
   const { role, loading, setRole } = useAuth();
   const [showTwoFactor, setShowTwoFactor] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [pendingRole, setPendingRole] = useState<'super-admin' | 'admin' | 'user' | null>(null);
+
+  // Initialize responsive behavior
+  useResponsiveInit();
 
   const handleLoginSuccess = (email: string, userRole: 'super-admin' | 'admin' | 'user') => {
     // All users (super-admin, admin, and user) require 2FA
@@ -55,7 +59,9 @@ export default function App() {
   return (
     <AuthProvider>
       <div className="dark size-full bg-[#0a0a0f] overflow-auto">
-        <AppContent />
+        <div className="app-container">
+          <AppContent />
+        </div>
       </div>
     </AuthProvider>
   );

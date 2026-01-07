@@ -345,7 +345,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
         </div>
 
         {/* Create Organization Modal */}
-        <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <Dialog open={showCreateModal} onOpenChange={setShowCreateModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
@@ -451,7 +451,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
         </Dialog>
 
         {/* Edit Organization Modal */}
-        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
@@ -587,7 +587,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
         </Dialog>
 
         {/* Delete Confirmation Modal */}
-        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
             <DialogHeader>
               <DialogTitle>Delete Organization</DialogTitle>
@@ -614,7 +614,7 @@ export function OrganizationsPage({ onBack }: OrganizationsPageProps) {
         </Dialog>
 
         {/* Email Service Modal */}
-        <Dialog open={showEmailModal} onOpenChange={setShowEmailModal}>
+        <Dialog open={showEmailModal} onOpenChange={setShowEmailModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">

@@ -311,7 +311,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
         </div>
 
         {/* Detailed Permissions Modal */}
-        <Dialog open={showDetailedPermissionsModal} onOpenChange={setShowDetailedPermissionsModal}>
+        <Dialog open={showDetailedPermissionsModal} onOpenChange={setShowDetailedPermissionsModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex items-center gap-4 mb-4">
@@ -663,7 +663,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
         </div>
 
         {/* Provide Access Modal */}
-        <Dialog open={showProvideAccessModal} onOpenChange={setShowProvideAccessModal}>
+        <Dialog open={showProvideAccessModal} onOpenChange={setShowProvideAccessModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
@@ -763,7 +763,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
         </Dialog>
 
         {/* View Access Modal */}
-        <Dialog open={showViewModal} onOpenChange={setShowViewModal}>
+        <Dialog open={showViewModal} onOpenChange={setShowViewModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white">Folder Access Details</DialogTitle>
@@ -855,7 +855,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
         </Dialog>
 
         {/* Edit Access Modal */}
-        <Dialog open={showEditAccessModal} onOpenChange={setShowEditAccessModal}>
+        <Dialog open={showEditAccessModal} onOpenChange={setShowEditAccessModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
@@ -935,7 +935,7 @@ export function AccessManagement({ onBack }: AccessManagementProps) {
         </Dialog>
 
         {/* Delete Confirmation Modal */}
-        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
             <DialogHeader>
               <DialogTitle>Remove Access</DialogTitle>

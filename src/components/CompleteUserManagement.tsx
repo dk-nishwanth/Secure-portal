@@ -520,7 +520,7 @@ export function CompleteUserManagement() {
 
 
       {/* Add User Modal */}
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal} modal={false}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
@@ -602,7 +602,7 @@ export function CompleteUserManagement() {
       </Dialog>
 
       {/* Edit User Modal */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal} modal={false}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
@@ -670,7 +670,7 @@ export function CompleteUserManagement() {
       </Dialog>
 
       {/* User Details Modal */}
-      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal} modal={false}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white">User Details</DialogTitle>
@@ -750,7 +750,7 @@ export function CompleteUserManagement() {
       </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal} modal={false}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Delete User</DialogTitle>

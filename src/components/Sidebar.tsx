@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Shield, Folder, Building2, UserCog, Activity, Share2 } from "lucide-react";
+import { LayoutDashboard, Users, Shield, Folder, Building2, UserCog } from "lucide-react";
 import { ActivePage } from "./Dashboard";
 import { useAuth } from "../contexts/AuthContext";
 

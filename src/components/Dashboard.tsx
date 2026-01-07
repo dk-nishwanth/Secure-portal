@@ -12,6 +12,7 @@ import { ProfilePage } from "./ProfilePage";
 import { SettingsPage } from "./SettingsPage";
 import HealthCheckPage from "./HealthCheckPage";
 import { FileShareDemo } from "./FileShareDemo";
+import { ResponsiveTest } from "./ResponsiveTest";
 import { useAuth } from "../contexts/AuthContext";
 
 export type ActivePage = "dashboard" | "admin" | "users" | "organizations" | "folders" | "access" | "files" | "shared" | "activity" | "profile" | "settings" | "health" | "fileshare";
@@ -29,7 +30,7 @@ export function Dashboard() {
       />
       <div className="flex">
         <Sidebar activePage={activePage} onPageChange={setActivePage} />
-        <main className="flex-1 p-6 pl-28">
+        <main className="flex-1 main-content">
           {activePage === "dashboard" && <RoleBasedDashboard onNavigate={setActivePage} />}
           {activePage === "admin" && role === "super-admin" && <AdminModule onBack={() => setActivePage("dashboard")} />}
           {activePage === "users" && (role === "super-admin" || role === "admin") && <CompleteUserManagement />}
@@ -45,6 +46,9 @@ export function Dashboard() {
           {activePage === "fileshare" && <FileShareDemo />}
         </main>
       </div>
+      
+      {/* Responsive Test Component - Remove in production */}
+      <ResponsiveTest />
     </div>
   );
 }

@@ -362,7 +362,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
         </div>
 
         {/* Create Folder Modal */}
-        <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <Dialog open={showCreateModal} onOpenChange={setShowCreateModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-8">
@@ -438,7 +438,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
         </Dialog>
 
         {/* Edit Folder Modal */}
-        <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <Dialog open={showEditModal} onOpenChange={setShowEditModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white">Edit Folder</DialogTitle>
@@ -497,7 +497,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
         </Dialog>
 
         {/* Delete Confirmation Modal */}
-        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
             <DialogHeader>
               <DialogTitle>Delete Folder</DialogTitle>
@@ -524,7 +524,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
         </Dialog>
 
         {/* Access Management Modal */}
-        <Dialog open={showAccessModal} onOpenChange={setShowAccessModal}>
+        <Dialog open={showAccessModal} onOpenChange={setShowAccessModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white">Manage Access</DialogTitle>
@@ -914,7 +914,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
         </div>
 
         {/* File View Modal */}
-        <Dialog open={showFileViewModal} onOpenChange={setShowFileViewModal}>
+        <Dialog open={showFileViewModal} onOpenChange={setShowFileViewModal} modal={false}>
           <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-white flex items-center gap-8">

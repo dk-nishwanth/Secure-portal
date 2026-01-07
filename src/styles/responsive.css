@@ -1,0 +1,231 @@
+/* Responsive Design for Consistent Layout Across All Screen Sizes */
+
+/* Base viewport configuration for consistent scaling */
+html {
+  /* Ensure consistent base font size */
+  font-size: 16px;
+  /* Prevent horizontal scrolling */
+  overflow-x: hidden;
+  /* Prevent zoom on mobile */
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+}
+
+body {
+  /* Ensure consistent body sizing */
+  min-width: 1920px;
+  /* Prevent text size adjustment on mobile */
+  -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  text-size-adjust: none;
+  /* Prevent zoom gestures */
+  touch-action: pan-x pan-y;
+}
+
+/* Container wrapper for consistent scaling */
+.app-container {
+  width: 1920px;
+  min-height: 100vh;
+  margin: 0 auto;
+  transform-origin: top left;
+  position: relative;
+}
+
+/* Responsive scaling for different screen sizes */
+/* 17" laptops and larger (1920px+) - No scaling needed */
+@media screen and (min-width: 1920px) {
+  .app-container {
+    transform: scale(1);
+  }
+}
+
+/* 15" laptops (1600px - 1919px) */
+@media screen and (max-width: 1919px) and (min-width: 1600px) {
+  .app-container {
+    transform: scale(0.833); /* 1600/1920 */
+  }
+}
+
+/* 15" laptops (1536px - 1599px) */
+@media screen and (max-width: 1599px) and (min-width: 1536px) {
+  .app-container {
+    transform: scale(0.8); /* 1536/1920 */
+  }
+}
+
+/* 14" laptops (1440px - 1535px) */
+@media screen and (max-width: 1535px) and (min-width: 1440px) {
+  .app-container {
+    transform: scale(0.75); /* 1440/1920 */
+  }
+}
+
+/* 13" laptops (1366px - 1439px) */
+@media screen and (max-width: 1439px) and (min-width: 1366px) {
+  .app-container {
+    transform: scale(0.711); /* 1366/1920 */
+  }
+}
+
+/* 13" laptops (1280px - 1365px) */
+@media screen and (max-width: 1365px) and (min-width: 1280px) {
+  .app-container {
+    transform: scale(0.667); /* 1280/1920 */
+  }
+}
+
+/* Small laptops (1024px - 1279px) */
+@media screen and (max-width: 1279px) and (min-width: 1024px) {
+  .app-container {
+    transform: scale(0.533); /* 1024/1920 */
+  }
+}
+
+/* Very small screens (below 1024px) */
+@media screen and (max-width: 1023px) {
+  .app-container {
+    transform: scale(0.5); /* Minimum scale */
+  }
+}
+
+/* Ensure all fixed positioned elements scale properly */
+.sidebar-fixed {
+  position: fixed !important;
+  left: 1.5rem !important;
+  top: 6rem !important;
+  z-index: 40 !important;
+}
+
+/* Ensure main content area maintains proper spacing */
+.main-content {
+  margin-left: 7rem !important;
+  padding: 1.5rem !important;
+}
+
+/* Prevent any layout shifts */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure consistent button and input sizing */
+button, input, select, textarea {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Prevent zoom on input focus (mobile) */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+/* Ensure consistent image scaling */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent content overflow */
+.overflow-container {
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+/* Ensure consistent grid layouts */
+.grid-responsive {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Consistent card sizing */
+.card-consistent {
+  min-height: 200px;
+  width: 100%;
+}
+
+/* Ensure tooltips and dropdowns position correctly */
+.tooltip-container, .dropdown-container {
+  position: relative;
+  z-index: 50;
+}
+
+/* Prevent text selection issues */
+.no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Ensure consistent scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Ensure consistent focus states */
+*:focus {
+  outline: 2px solid #FF7619;
+  outline-offset: 2px;
+}
+
+/* Prevent layout shifts during loading */
+.loading-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Prevent zoom and touch manipulation */
+html, body {
+  -ms-touch-action: pan-x pan-y;
+  touch-action: pan-x pan-y;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Disable zoom on double tap */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Re-enable text selection for content areas */
+.selectable-text {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+/* Ensure consistent viewport behavior */
+@viewport {
+  width: 1920px;
+  initial-scale: 1.0;
+  minimum-scale: 1.0;
+  maximum-scale: 1.0;
+  user-scalable: no;
+}

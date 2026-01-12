@@ -74,17 +74,22 @@ export function UserManagement() {
           </h2>
           <p className="text-gray-400">Manage user accounts and permissions</p>
         </div>
-        <Button className="bg-white/10 hover:bg-white/20 rounded-xl gap-2 border border-white/10 backdrop-blur-xl transition-all">
-          <Plus className="w-4 h-4 text-white" />
-          <span 
-            className="font-semibold"
+        <Button 
+          className="rounded-xl gap-2 border-0 backdrop-blur-xl transition-all hover:scale-105 hover:shadow-2xl relative overflow-hidden group"
+          style={{
+            background: 'linear-gradient(135deg, #FF7619, #FF8A3D, #FF7619)',
+            boxShadow: '0 8px 32px rgba(255, 118, 25, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+          }}
+        >
+          {/* Animated background overlay */}
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{
-              background: 'linear-gradient(to right, rgba(154, 24, 251, 1), rgb(200, 100, 200), #FF7619)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              background: 'linear-gradient(135deg, #FF8A3D, #FFB366, #FF7619)',
             }}
-          >
+          />
+          <Plus className="w-4 h-4 text-white relative z-10" />
+          <span className="font-semibold text-white relative z-10">
             Add User
           </span>
         </Button>

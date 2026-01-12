@@ -562,7 +562,7 @@ export function CompleteFileManager() {
       )}
 
       {/* Create Folder Modal */}
-      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal} modal={false}>
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Create New Folder</DialogTitle>
@@ -602,7 +602,7 @@ export function CompleteFileManager() {
       </Dialog>
 
       {/* Rename Modal */}
-      <Dialog open={renameModalOpen} onOpenChange={setRenameModalOpen} modal={false}>
+      <Dialog open={renameModalOpen} onOpenChange={setRenameModalOpen} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Rename {renameTarget?.type === 'folder' ? 'Folder' : 'File'}</DialogTitle>
@@ -641,7 +641,7 @@ export function CompleteFileManager() {
       </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen} modal={false}>
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Delete {deleteTarget?.type === 'folder' ? 'Folder' : 'File'}</DialogTitle>
@@ -668,7 +668,7 @@ export function CompleteFileManager() {
       </Dialog>
 
       {/* Manage Access Modal */}
-      <Dialog open={accessModalOpen} onOpenChange={setAccessModalOpen} modal={false}>
+      <Dialog open={accessModalOpen} onOpenChange={setAccessModalOpen} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-2xl">
           <DialogHeader>
             <DialogTitle>Manage Access - {accessTarget?.name}</DialogTitle>

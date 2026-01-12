@@ -243,10 +243,21 @@ export function CompleteUserManagement() {
         </div>
         <Button
           onClick={() => setShowAddModal(true)}
-          className="h-12 px-6 bg-[#9A18FB] hover:bg-[#9A18FB]/90 rounded-xl transition-all shadow-lg text-white font-semibold"
+          className="h-12 px-6 rounded-xl transition-all shadow-lg text-white font-semibold relative overflow-hidden group border-0"
+          style={{
+            background: 'linear-gradient(135deg, #FF7619, #FF8A3D, #FF7619)',
+            boxShadow: '0 8px 32px rgba(255, 118, 25, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+          }}
         >
-          <UserPlus className="w-5 h-5 mr-2" />
-          Add User
+          {/* Animated background overlay */}
+          <div 
+            className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{
+              background: 'linear-gradient(135deg, #FF8A3D, #FFB366, #FF7619)',
+            }}
+          />
+          <UserPlus className="w-5 h-5 mr-2 relative z-10" />
+          <span className="relative z-10">Add User</span>
         </Button>
       </div>
 
@@ -520,7 +531,7 @@ export function CompleteUserManagement() {
 
 
       {/* Add User Modal */}
-      <Dialog open={showAddModal} onOpenChange={setShowAddModal} modal={false}>
+      <Dialog open={showAddModal} onOpenChange={setShowAddModal} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
@@ -602,7 +613,7 @@ export function CompleteUserManagement() {
       </Dialog>
 
       {/* Edit User Modal */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal} modal={false}>
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
@@ -670,7 +681,7 @@ export function CompleteUserManagement() {
       </Dialog>
 
       {/* User Details Modal */}
-      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal} modal={false}>
+      <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white max-w-md">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white">User Details</DialogTitle>
@@ -750,7 +761,7 @@ export function CompleteUserManagement() {
       </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal} modal={false}>
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal} modal={true}>
         <DialogContent className="bg-[#1a1a2e] border-white/10 text-white">
           <DialogHeader>
             <DialogTitle>Delete User</DialogTitle>

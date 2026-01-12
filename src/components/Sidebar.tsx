@@ -38,7 +38,7 @@ export function Sidebar({ activePage, onPageChange }: SidebarProps) {
                     userMenuItems;
 
   return (
-    <aside className="fixed left-6 top-24 h-[calc(100vh-120px)] w-16 bg-[#1a1a2e]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center py-6 z-40">
+    <aside className="sidebar-fixed h-[calc(100vh-120px)] w-16 bg-[#1a1a2e]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center py-6">
       {/* Main Menu */}
       <div className="space-y-2 mb-6">
         {menuItems.map((item) => {

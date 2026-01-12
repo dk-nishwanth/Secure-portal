@@ -97,12 +97,17 @@ body {
   left: 1.5rem !important;
   top: 6rem !important;
   z-index: 40 !important;
+  /* Ensure it stays fixed during scrolling */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
-/* Ensure main content area maintains proper spacing */
+/* Ensure main content area maintains proper spacing and scrolling */
 .main-content {
   margin-left: 7rem !important;
   padding: 1.5rem !important;
+  overflow-y: auto !important;
+  height: calc(100vh - 120px) !important;
 }
 
 /* Prevent any layout shifts */

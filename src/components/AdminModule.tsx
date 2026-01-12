@@ -189,26 +189,58 @@ export function AdminModule({ onBack }: AdminModuleProps) {
             <Button
               onClick={() => setActiveView('dashboard')}
               variant="ghost"
-              className={`h-11 px-5 rounded-xl font-medium transition-all ${
+              className={`h-11 px-5 rounded-xl font-medium transition-all relative overflow-hidden group ${
                 activeView === 'dashboard' 
-                  ? 'bg-gradient-to-r from-[#FF7619] to-[#9A18FB] text-white shadow-lg' 
+                  ? 'text-white shadow-lg' 
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
               }`}
+              style={
+                activeView === 'dashboard'
+                  ? {
+                      background: 'linear-gradient(135deg, #FF7619, #FF8A3D, #9A18FB)',
+                      boxShadow: '0 8px 32px rgba(255, 118, 25, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                    }
+                  : undefined
+              }
             >
-              <LayoutDashboard className="w-4 h-4 mr-2" />
-              Dashboard Metrics
+              {activeView === 'dashboard' && (
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF8A3D, #FFB366, #B347FF)',
+                  }}
+                />
+              )}
+              <LayoutDashboard className="w-4 h-4 mr-2 relative z-10" />
+              <span className="relative z-10">Dashboard Metrics</span>
             </Button>
             <Button
               onClick={() => setActiveView('admins')}
               variant="ghost"
-              className={`h-11 px-5 rounded-xl font-medium transition-all ${
+              className={`h-11 px-5 rounded-xl font-medium transition-all relative overflow-hidden group ${
                 activeView === 'admins' 
-                  ? 'bg-gradient-to-r from-[#FF7619] to-[#9A18FB] text-white shadow-lg' 
+                  ? 'text-white shadow-lg' 
                   : 'text-gray-400 hover:text-white hover:bg-white/10'
               }`}
+              style={
+                activeView === 'admins'
+                  ? {
+                      background: 'linear-gradient(135deg, #FF7619, #FF8A3D, #9A18FB)',
+                      boxShadow: '0 8px 32px rgba(255, 118, 25, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                    }
+                  : undefined
+              }
             >
-              <Shield className="w-4 h-4 mr-2" />
-              List of Admins
+              {activeView === 'admins' && (
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF8A3D, #FFB366, #B347FF)',
+                  }}
+                />
+              )}
+              <Shield className="w-4 h-4 mr-2 relative z-10" />
+              <span className="relative z-10">List of Admins</span>
             </Button>
           </div>
         </div>

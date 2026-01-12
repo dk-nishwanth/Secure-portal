@@ -12,7 +12,6 @@ import { ProfilePage } from "./ProfilePage";
 import { SettingsPage } from "./SettingsPage";
 import HealthCheckPage from "./HealthCheckPage";
 import { FileShareDemo } from "./FileShareDemo";
-import { ResponsiveTest } from "./ResponsiveTest";
 import { useAuth } from "../contexts/AuthContext";
 
 export type ActivePage = "dashboard" | "admin" | "users" | "organizations" | "folders" | "access" | "files" | "shared" | "activity" | "profile" | "settings" | "health" | "fileshare";
@@ -46,9 +45,6 @@ export function Dashboard() {
           {activePage === "fileshare" && <FileShareDemo />}
         </main>
       </div>
-      
-      {/* Responsive Test Component - Remove in production */}
-      <ResponsiveTest />
     </div>
   );
 }

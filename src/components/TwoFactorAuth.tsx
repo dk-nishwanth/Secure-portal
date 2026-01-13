@@ -76,6 +76,7 @@ export function TwoFactorAuth({ email, onVerify, onBack }: TwoFactorAuthProps) {
       <div className="w-full max-w-md">
         {/* Back Button */}
         <button
+          type="button"
           onClick={onBack}
           className="flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
         >

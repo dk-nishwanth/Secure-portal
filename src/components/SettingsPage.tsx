@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ArrowLeft, User, Lock, Bell, Palette, Globe, Shield, Database, HardDrive, Trash2, Download, Moon, Sun, Monitor } from 'lucide-react';
+import { ArrowLeft, User, Lock, Bell, Palette, Globe, Shield, Database, HardDrive, Trash2, Download, Moon, Sun, Monitor, Calendar, CheckSquare, Paintbrush } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Switch } from './ui/switch';
+import { SimpleSwitch } from './ui/simple-switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { useAuth } from '../contexts/AuthContext';
 import {
@@ -13,6 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { DatePicker } from './ui/date-picker';
+import { MultiSelect } from './ui/multi-select';
+import { ColorPicker } from './ui/color-picker';
 
 interface SettingsPageProps {
   onBack?: () => void;
@@ -45,6 +48,26 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
   const [profileVisibility, setProfileVisibility] = useState('organization');
   const [activityTracking, setActivityTracking] = useState(true);
   const [dataCollection, setDataCollection] = useState(true);
+
+  // Component Demo Settings
+  const [showDatePicker, setShowDatePicker] = useState(true); // Start with true to show it's working
+  const [showMultiSelect, setShowMultiSelect] = useState(true); // Start with true to show it's working
+  const [showColorPicker, setShowColorPicker] = useState(true); // Start with true to show it's working
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // Set default date
+  const [selectedItems, setSelectedItems] = useState<string[]>(['react', 'nextjs']); // Set default selection
+  const [selectedColor, setSelectedColor] = useState('#FF7619');
+
+  // Multi-select options
+  const multiSelectOptions = [
+    { value: 'react', label: 'React' },
+    { value: 'vue', label: 'Vue.js' },
+    { value: 'angular', label: 'Angular' },
+    { value: 'svelte', label: 'Svelte' },
+    { value: 'nextjs', label: 'Next.js' },
+    { value: 'nuxt', label: 'Nuxt.js' },
+    { value: 'gatsby', label: 'Gatsby' },
+    { value: 'remix', label: 'Remix' },
+  ];
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -88,6 +111,10 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
           <TabsTrigger value="appearance" className="rounded-lg data-[state=active]:bg-[#FF7619] data-[state=active]:text-white">
             <Palette className="w-4 h-4 mr-2" />
             Appearance
+          </TabsTrigger>
+          <TabsTrigger value="components" className="rounded-lg data-[state=active]:bg-[#FF7619] data-[state=active]:text-white">
+            <Paintbrush className="w-4 h-4 mr-2" />
+            Components
           </TabsTrigger>
           <TabsTrigger value="privacy" className="rounded-lg data-[state=active]:bg-[#FF7619] data-[state=active]:text-white">
             <Shield className="w-4 h-4 mr-2" />
@@ -185,7 +212,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                       <p className="text-sm text-gray-400">Require 2FA for account access</p>
                     </div>
                   </div>
-                  <Switch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
+                  <SimpleSwitch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
@@ -198,7 +225,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                       <p className="text-sm text-gray-400">Get notified of new login attempts</p>
                     </div>
                   </div>
-                  <Switch checked={loginAlerts} onCheckedChange={setLoginAlerts} />
+                  <SimpleSwitch checked={loginAlerts} onCheckedChange={setLoginAlerts} />
                 </div>
 
                 <div className="p-5 rounded-xl bg-white/5 border border-white/10">
@@ -255,7 +282,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                       <p className="text-sm text-gray-400">Receive notifications via email</p>
                     </div>
                   </div>
-                  <Switch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
+                  <SimpleSwitch checked={emailNotifications} onCheckedChange={setEmailNotifications} />
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
@@ -268,7 +295,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                       <p className="text-sm text-gray-400">Receive push notifications on mobile</p>
                     </div>
                   </div>
-                  <Switch checked={pushNotifications} onCheckedChange={setPushNotifications} />
+                  <SimpleSwitch checked={pushNotifications} onCheckedChange={setPushNotifications} />
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
@@ -281,7 +308,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                       <p className="text-sm text-gray-400">Show desktop notifications</p>
                     </div>
                   </div>
-                  <Switch checked={desktopNotifications} onCheckedChange={setDesktopNotifications} />
+                  <SimpleSwitch checked={desktopNotifications} onCheckedChange={setDesktopNotifications} />
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
@@ -294,7 +321,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                       <p className="text-sm text-gray-400">Weekly summary of your activity</p>
                     </div>
                   </div>
-                  <Switch checked={activityDigest} onCheckedChange={setActivityDigest} />
+                  <SimpleSwitch checked={activityDigest} onCheckedChange={setActivityDigest} />
                 </div>
               </div>
             </div>
@@ -353,7 +380,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                     <p className="text-white font-medium mb-1">Compact Mode</p>
                     <p className="text-sm text-gray-400">Reduce spacing and padding</p>
                   </div>
-                  <Switch checked={compactMode} onCheckedChange={setCompactMode} />
+                  <SimpleSwitch checked={compactMode} onCheckedChange={setCompactMode} />
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
@@ -361,7 +388,216 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                     <p className="text-white font-medium mb-1">Animations</p>
                     <p className="text-sm text-gray-400">Enable interface animations</p>
                   </div>
-                  <Switch checked={animations} onCheckedChange={setAnimations} />
+                  <SimpleSwitch checked={animations} onCheckedChange={setAnimations} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Components Tab */}
+        <TabsContent value="components" className="space-y-6">
+          <div className="relative group">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 rounded-2xl blur-xl opacity-50"></div>
+            <div className="relative bg-[#1a1a2e]/80 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
+              <h3 className="text-lg font-semibold text-white mb-6">UI Components Demo</h3>
+              
+              <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30">
+                <p className="text-white font-semibold text-sm mb-1">🔧 Debug Information</p>
+                <p className="text-blue-200 text-sm">
+                  Date Picker: <span className="font-bold text-white">{showDatePicker ? 'ON' : 'OFF'}</span> | 
+                  Multi-Select: <span className="font-bold text-white">{showMultiSelect ? 'ON' : 'OFF'}</span> | 
+                  Color Picker: <span className="font-bold text-white">{showColorPicker ? 'ON' : 'OFF'}</span>
+                </p>
+              </div>
+              
+              <div className="space-y-6">
+                {/* Date Picker Toggle */}
+                <div className="flex items-center justify-between p-6 rounded-xl bg-white/10 border border-white/20 hover:border-white/30 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+                      <Calendar className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-lg mb-1">Date Picker</p>
+                      <p className="text-gray-300 text-sm">Interactive calendar date selection</p>
+                      <p className="text-xs text-blue-300 mt-1 font-medium">Status: {showDatePicker ? 'Enabled' : 'Disabled'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <SimpleSwitch 
+                      checked={showDatePicker} 
+                      onCheckedChange={(checked) => {
+                        console.log('Date Picker toggle:', checked);
+                        setShowDatePicker(checked);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Date Picker Demo */}
+                {showDatePicker && (
+                  <div className="p-6 rounded-xl bg-gradient-to-r from-blue-500/15 to-cyan-500/15 border-2 border-blue-500/30 animate-in slide-in-from-top-2 duration-300">
+                    <Label className="text-white font-semibold mb-4 block flex items-center gap-3">
+                      <Calendar className="w-5 h-5 text-blue-400" />
+                      Select a Date
+                    </Label>
+                    <DatePicker
+                      date={selectedDate}
+                      onDateChange={setSelectedDate}
+                      placeholder="Choose a date..."
+                      className="max-w-sm"
+                    />
+                    {selectedDate && (
+                      <div className="mt-4 p-4 rounded-lg bg-blue-500/25 border border-blue-400/40">
+                        <p className="text-blue-100 font-semibold text-sm mb-1">
+                          📅 Selected Date:
+                        </p>
+                        <p className="text-white font-bold">
+                          {selectedDate.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Multi-Select Toggle */}
+                <div className="flex items-center justify-between p-6 rounded-xl bg-white/10 border border-white/20 hover:border-white/30 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                      <CheckSquare className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-lg mb-1">Multi-Select</p>
+                      <p className="text-gray-300 text-sm">Select multiple items from a list</p>
+                      <p className="text-xs text-green-300 mt-1 font-medium">Status: {showMultiSelect ? 'Enabled' : 'Disabled'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <SimpleSwitch 
+                      checked={showMultiSelect} 
+                      onCheckedChange={(checked) => {
+                        console.log('Multi-Select toggle:', checked);
+                        setShowMultiSelect(checked);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Multi-Select Demo */}
+                {showMultiSelect && (
+                  <div className="p-6 rounded-xl bg-gradient-to-r from-green-500/15 to-emerald-500/15 border-2 border-green-500/30 animate-in slide-in-from-top-2 duration-300">
+                    <Label className="text-white font-semibold mb-4 block flex items-center gap-3">
+                      <CheckSquare className="w-5 h-5 text-green-400" />
+                      Choose Technologies
+                    </Label>
+                    <MultiSelect
+                      options={multiSelectOptions}
+                      selected={selectedItems}
+                      onSelectionChange={setSelectedItems}
+                      placeholder="Select frameworks..."
+                      className="max-w-sm"
+                    />
+                    {selectedItems.length > 0 && (
+                      <div className="mt-4 p-4 rounded-lg bg-green-500/25 border border-green-400/40">
+                        <p className="text-green-100 font-semibold text-sm mb-2">
+                          ✅ Selected Technologies ({selectedItems.length}):
+                        </p>
+                        <p className="text-white font-medium">
+                          {selectedItems.map(item => 
+                            multiSelectOptions.find(opt => opt.value === item)?.label
+                          ).join(', ')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Color Picker Toggle */}
+                <div className="flex items-center justify-between p-6 rounded-xl bg-white/10 border border-white/20 hover:border-white/30 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                      <Palette className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold text-lg mb-1">Color Picker</p>
+                      <p className="text-gray-300 text-sm">Choose colors with presets and custom input</p>
+                      <p className="text-xs text-purple-300 mt-1 font-medium">Status: {showColorPicker ? 'Enabled' : 'Disabled'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <SimpleSwitch 
+                      checked={showColorPicker} 
+                      onCheckedChange={(checked) => {
+                        console.log('Color Picker toggle:', checked);
+                        setShowColorPicker(checked);
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Color Picker Demo */}
+                {showColorPicker && (
+                  <div className="p-6 rounded-xl bg-gradient-to-r from-purple-500/15 to-pink-500/15 border-2 border-purple-500/30 animate-in slide-in-from-top-2 duration-300">
+                    <Label className="text-white font-semibold mb-4 block flex items-center gap-3">
+                      <Palette className="w-5 h-5 text-purple-400" />
+                      Pick a Color
+                    </Label>
+                    <ColorPicker
+                      color={selectedColor}
+                      onColorChange={setSelectedColor}
+                      className="max-w-sm"
+                    />
+                    <div className="mt-4 p-4 rounded-lg border-2 transition-all duration-300" 
+                         style={{ 
+                           backgroundColor: selectedColor + '25',
+                           borderColor: selectedColor + '60'
+                         }}>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div 
+                          className="w-6 h-6 rounded-lg border-2 border-white/30 shadow-lg"
+                          style={{ backgroundColor: selectedColor }}
+                        />
+                        <p className="text-white font-bold text-lg">{selectedColor}</p>
+                      </div>
+                      <p className="text-white/90 text-sm">
+                        🎨 Preview: This box uses your selected color as background with 25% opacity
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Component Info */}
+                <div className="p-6 rounded-xl bg-gradient-to-r from-blue-500/15 to-indigo-500/15 border border-blue-500/30">
+                  <div className="flex items-start gap-4">
+                    <Paintbrush className="w-6 h-6 text-blue-400 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-white font-semibold text-lg mb-2">Component Library</p>
+                      <p className="text-gray-200 text-sm mb-4 leading-relaxed">
+                        These components are built with Radix UI primitives and styled with Tailwind CSS. 
+                        They're fully accessible and customizable for your projects.
+                      </p>
+                      <div className="space-y-2 text-sm text-gray-300">
+                        <p className="flex items-center gap-2">
+                          <span className="w-2 h-2 bg-blue-400 rounded-full"></span>
+                          <strong className="text-white">Date Picker:</strong> Built with react-day-picker and date-fns
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                          <strong className="text-white">Multi-Select:</strong> Custom component with badge display
+                        </p>
+                        <p className="flex items-center gap-2">
+                          <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                          <strong className="text-white">Color Picker:</strong> Preset colors with custom hex input
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -395,7 +631,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                     <p className="text-white font-medium mb-1">Activity Tracking</p>
                     <p className="text-sm text-gray-400">Allow tracking of your activity</p>
                   </div>
-                  <Switch checked={activityTracking} onCheckedChange={setActivityTracking} />
+                  <SimpleSwitch checked={activityTracking} onCheckedChange={setActivityTracking} />
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all">
@@ -403,7 +639,7 @@ export function SettingsPage({ onBack }: SettingsPageProps) {
                     <p className="text-white font-medium mb-1">Data Collection</p>
                     <p className="text-sm text-gray-400">Help improve our service with usage data</p>
                   </div>
-                  <Switch checked={dataCollection} onCheckedChange={setDataCollection} />
+                  <SimpleSwitch checked={dataCollection} onCheckedChange={setDataCollection} />
                 </div>
 
                 <div className="p-5 rounded-xl bg-blue-500/10 border border-blue-500/20">

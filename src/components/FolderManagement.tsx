@@ -231,6 +231,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
           {/* Folder Type Tabs */}
           <div className="flex gap-2 mb-6">
             <button
+              type="button"
               onClick={() => setFolderType('internal')}
               style={{
                 backgroundColor: folderType === 'internal' ? '#FF7619' : 'transparent',
@@ -241,6 +242,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
               Internal Folders
             </button>
             <button
+              type="button"
               onClick={() => setFolderType('external')}
               style={{
                 backgroundColor: folderType === 'external' ? '#FF7619' : 'transparent',
@@ -608,6 +610,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
           {/* Breadcrumb Navigation */}
           <div className="flex items-center gap-2 mb-4 text-sm">
             <button
+              type="button"
               onClick={() => {
                 setView('list');
                 setSelectedFolder(null);
@@ -622,6 +625,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
           {/* Breadcrumb Path */}
           <div className="flex items-center gap-2 mb-6 text-sm">
             <button
+              type="button"
               onClick={() => {
                 setView('list');
                 setSelectedFolder(null);
@@ -733,6 +737,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
           {/* Breadcrumb Navigation */}
           <div className="flex items-center gap-2 mb-4 text-sm">
             <button
+              type="button"
               onClick={() => {
                 setView('list');
                 setSelectedFolder(null);
@@ -747,6 +752,7 @@ export function FolderManagement({ onBack }: FolderManagementProps) {
           {/* Breadcrumb Path */}
           <div className="flex items-center gap-2 mb-6 text-sm">
             <button
+              type="button"
               onClick={() => {
                 setView('list');
                 setSelectedFolder(null);

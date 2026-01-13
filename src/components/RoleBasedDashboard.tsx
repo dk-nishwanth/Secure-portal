@@ -329,6 +329,7 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                 <div className="mb-4">
                   <div className="flex gap-2">
                     <button 
+                      type="button"
                       onClick={() => onNavigate?.('users')}
                       className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
                       title="User Management"
@@ -336,6 +337,7 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                       <Users className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                     </button>
                     <button 
+                      type="button"
                       onClick={() => onNavigate?.('settings')}
                       className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
                       title="System Settings"
@@ -343,6 +345,7 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                       <Settings className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                     </button>
                     <button 
+                      type="button"
                       onClick={() => onNavigate?.('admin')}
                       className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
                       title="Admin Module"
@@ -350,6 +353,7 @@ function SuperAdminDashboard({ onNavigate }: DashboardProps = {}) {
                       <Database className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                     </button>
                     <button 
+                      type="button"
                       onClick={() => onNavigate?.('access')}
                       className="w-12 h-12 rounded-lg bg-white/20 backdrop-blur-xl hover:bg-white/30 transition-all flex items-center justify-center group cursor-pointer"
                       title="Access Management"

@@ -364,6 +364,7 @@ export function CompleteFileManager() {
             {breadcrumbs.map((crumb, index) => (
               <div key={index} className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => handleBreadcrumbClick(index)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                     index === breadcrumbs.length - 1

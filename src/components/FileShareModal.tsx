@@ -113,6 +113,7 @@ export function FileShareModal({ isOpen, onClose, fileName = "Selected File" }: 
           <div className="flex items-center space-x-4">
             {step !== 'type' && (
               <button
+                type="button"
                 onClick={handleBack}
                 className="p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
